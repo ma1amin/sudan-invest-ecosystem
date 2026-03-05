@@ -204,32 +204,79 @@ export const appRouter = router({
         if (!venture) throw new TRPCError({ code: "NOT_FOUND" });
         if (venture.founderId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN" });
 
-        // Trigger AI scoring
+        // Trigger AI scoring — aligned with Sudan Innovation & Investment Ecosystem investment thesis
         try {
           const aiResponse = await invokeLLM({
             messages: [
               {
                 role: "system",
-                content: `You are an expert venture analyst for an African innovation ecosystem. Analyze the venture submission and provide a structured JSON response with:
-1. readinessScore (0-100): Overall venture readiness
-2. marketClarity (0-100): How clear and validated the market opportunity is
-3. businessModelStrength (0-100): Strength of the business model
-4. teamReadiness (0-100): Team capability assessment
-5. scalabilityScore (0-100): Potential for scale
-6. riskIndicators (array of strings): Key risk factors identified
-7. strengths (array of strings): Key strengths
-8. recommendations (array of strings): Specific improvement recommendations
-9. summary (string): 2-3 sentence executive summary of the analysis`,
+                content: `You are a senior venture analyst for the Sudan Innovation & Investment Ecosystem — a trusted AI-powered platform connecting Sudanese and African entrepreneurs with investors, mentors, and diaspora supporters to accelerate economic rebuilding and innovation.
+
+## PLATFORM INVESTMENT THESIS
+This platform prioritizes ventures that:
+1. Address real market gaps in Sudan and the broader African context (post-conflict economic recovery, infrastructure deficits, underserved populations)
+2. Operate in priority sectors: AgriTech, Renewable Energy, FinTech & Digital Finance, Logistics & Mobility, Healthcare & MedTech, EdTech, and Technology & Digital Transformation
+3. Demonstrate potential for meaningful social and economic impact (job creation, youth empowerment, diaspora capital mobilization)
+4. Are founded or co-founded by Sudanese nationals or African entrepreneurs with deep market understanding
+5. Show a viable path to sustainability — not purely grant-dependent
+6. Have diaspora relevance — potential to attract Sudanese diaspora investment, mentorship, or partnerships
+7. Demonstrate awareness of and resilience to local regulatory, political, and infrastructure risks
+
+## SCORING DIMENSIONS
+Evaluate the venture across these 9 dimensions (each scored 0–100):
+
+1. **readinessScore** (0–100): Composite overall readiness. Weight: marketClarity (25%), businessModelStrength (20%), teamReadiness (20%), scalabilityScore (15%), impactScore (10%), diasporaRelevance (5%), sectorAlignment (5%).
+
+2. **marketClarity** (0–100): How clearly defined and validated is the target market? Consider: problem specificity, evidence of demand, customer segment clarity, market size awareness in the Sudanese/African context.
+
+3. **businessModelStrength** (0–100): How robust and sustainable is the revenue model? Consider: revenue streams, unit economics awareness, path to profitability, pricing strategy, and avoidance of pure grant dependency.
+
+4. **teamReadiness** (0–100): Does the team have the capability to execute? Consider: relevant domain expertise, founding team composition, local market knowledge, prior entrepreneurial experience, and team size relative to stage.
+
+5. **scalabilityScore** (0–100): What is the potential for regional or continental scale? Consider: technology leverage, replicability across African markets, network effects, and infrastructure independence.
+
+6. **impactScore** (0–100): What is the projected social and economic impact? Consider: job creation potential, youth and women empowerment, contribution to national economic recovery, food security, energy access, financial inclusion, or healthcare access.
+
+7. **diasporaRelevance** (0–100): How attractive is this venture to Sudanese diaspora investors, mentors, or partners? Consider: sector familiarity for diaspora, investment ticket size accessibility, mentorship opportunity, emotional connection to Sudan's rebuilding, and cross-border commercial potential.
+
+8. **sectorAlignment** (0–100): How well does this venture align with the platform's priority sectors? Score 100 for AgriTech, Renewable Energy, FinTech, Logistics, Healthcare, EdTech, or Technology. Score 60–80 for adjacent sectors. Score 30–50 for non-priority sectors.
+
+9. **regulatoryRisk** (0–100): This is a RISK score — higher means MORE risk. Assess exposure to: currency instability, regulatory uncertainty in Sudan, cross-border payment restrictions, land/property rights issues, political instability, and infrastructure dependency.
+
+## OUTPUT REQUIREMENTS
+Also provide:
+- **riskIndicators** (array of strings): Specific risk factors relevant to Sudan/Africa context. Be precise — avoid generic statements.
+- **strengths** (array of strings): Genuine differentiating strengths, especially those relevant to the platform's thesis.
+- **recommendations** (array of strings): Actionable, specific improvement steps the founder can take to increase readiness and investor attractiveness on this platform.
+- **summary** (string): A 3-sentence executive summary written for an investor reviewing this venture on the platform. Mention sector, stage, impact potential, and key concern.
+- **investorReadinessFlag** (string): One of "ready_for_investors" | "needs_development" | "early_stage_incubation" based on overall readiness.
+- **diasporaEngagementType** (string): The most suitable diaspora engagement type for this venture: "investment" | "mentorship" | "partnership" | "sponsorship" | "not_applicable".
+
+## SCORING CALIBRATION
+- Be rigorous but fair. Early-stage ventures in Sudan face genuine structural challenges — account for context.
+- Do not penalize founders for operating in a difficult environment if they demonstrate awareness and resilience.
+- Reward clarity of thought, market specificity, and honest risk acknowledgment.
+- A score of 70+ on readinessScore indicates investor-ready. 50–69 indicates development needed. Below 50 indicates early incubation stage.
+- Never fabricate information not present in the submission. If data is missing, note it as a risk indicator and recommendation.`,
               },
               {
                 role: "user",
-                content: `Analyze this venture:
-Title: ${venture.title}
-Stage: ${venture.stage}
-Description: ${venture.description}
-Funding Target: ${venture.fundingTarget ?? "Not specified"}
-Team Size: ${venture.teamSize ?? "Not specified"}
-Country: ${venture.country ?? "Not specified"}`,
+                content: `Analyze this venture submission for the Sudan Innovation & Investment Ecosystem platform:
+
+**Venture Title:** ${venture.title}${venture.titleAr ? ` (Arabic: ${venture.titleAr})` : ""}
+**Stage:** ${venture.stage}
+**Sector:** ${venture.sectorId ? `Sector ID ${venture.sectorId}` : "Not specified"}${Array.isArray(venture.subsectors) && venture.subsectors.length > 0 ? ` | Subsectors: ${(venture.subsectors as string[]).join(", ")}` : ""}
+**Country of Operation:** ${venture.country ?? "Not specified"}
+**Team Size:** ${venture.teamSize ?? "Not specified"}
+**Funding Target:** ${venture.fundingTarget ?? "Not specified"}
+**Tagline:** ${venture.tagline ?? "Not provided"}
+
+**Description:**
+${venture.description}
+
+${venture.website ? `**Website:** ${venture.website}` : ""}
+
+Please evaluate this venture against the platform's investment thesis and scoring framework. Be specific to the Sudan/Africa context in your analysis.`,
               },
             ],
             response_format: {
@@ -245,12 +292,24 @@ Country: ${venture.country ?? "Not specified"}`,
                     businessModelStrength: { type: "number" },
                     teamReadiness: { type: "number" },
                     scalabilityScore: { type: "number" },
+                    impactScore: { type: "number" },
+                    diasporaRelevance: { type: "number" },
+                    sectorAlignment: { type: "number" },
+                    regulatoryRisk: { type: "number" },
                     riskIndicators: { type: "array", items: { type: "string" } },
                     strengths: { type: "array", items: { type: "string" } },
                     recommendations: { type: "array", items: { type: "string" } },
                     summary: { type: "string" },
+                    investorReadinessFlag: { type: "string" },
+                    diasporaEngagementType: { type: "string" },
                   },
-                  required: ["readinessScore", "marketClarity", "businessModelStrength", "teamReadiness", "scalabilityScore", "riskIndicators", "strengths", "recommendations", "summary"],
+                  required: [
+                    "readinessScore", "marketClarity", "businessModelStrength",
+                    "teamReadiness", "scalabilityScore", "impactScore",
+                    "diasporaRelevance", "sectorAlignment", "regulatoryRisk",
+                    "riskIndicators", "strengths", "recommendations",
+                    "summary", "investorReadinessFlag", "diasporaEngagementType",
+                  ],
                   additionalProperties: false,
                 },
               },
@@ -362,25 +421,129 @@ Country: ${venture.country ?? "Not specified"}`,
         const investors = await getAllUsers(100, 0);
         const investorUsers = investors.filter((u) => u.platformRole === "investor");
 
-        for (const investor of investorUsers.slice(0, 10)) {
+        // Retrieve AI analysis for this venture to inform matching
+        const aiAnalysis = venture.aiAnalysis as Record<string, unknown> | null;
+        const ventureSectorId = venture.sectorId;
+        const ventureStage = venture.stage;
+        const ventureCountry = venture.country;
+
+        // Priority sectors aligned with platform investment thesis
+        const PRIORITY_SECTOR_IDS = new Set([1, 2, 3, 4, 5, 6, 7]); // AgriTech, Renewable Energy, FinTech, Logistics, Healthcare, EdTech, Technology
+
+        for (const investor of investorUsers.slice(0, 20)) {
           const prefs = await getInvestorPreferences(investor.id);
-          const score = Math.floor(60 + Math.random() * 40);
+
+          // ── INVESTMENT THESIS ALIGNMENT SCORING ──────────────────────
+          // Factor 1: Sector alignment (30 points)
+          let sectorScore = 0;
+          if (prefs?.preferredSectors && Array.isArray(prefs.preferredSectors)) {
+            const preferredSectors = prefs.preferredSectors as number[];
+            if (ventureSectorId && preferredSectors.includes(ventureSectorId)) {
+              sectorScore = 30; // Exact match
+            } else if (ventureSectorId && PRIORITY_SECTOR_IDS.has(ventureSectorId)) {
+              sectorScore = 20; // Priority sector even if not in prefs
+            } else {
+              sectorScore = 10; // Non-priority sector
+            }
+          } else {
+            // No preferences set — give benefit of doubt for priority sectors
+            sectorScore = ventureSectorId && PRIORITY_SECTOR_IDS.has(ventureSectorId) ? 25 : 15;
+          }
+
+          // Factor 2: Stage alignment (25 points)
+          let stageScore = 0;
+          if (prefs?.preferredStages && Array.isArray(prefs.preferredStages)) {
+            const preferredStages = prefs.preferredStages as string[];
+            if (preferredStages.includes(ventureStage)) {
+              stageScore = 25; // Exact stage match
+            } else {
+              // Adjacent stage scoring
+              const stageOrder = ["idea", "prototype", "mvp", "early_traction", "growth", "scaling"];
+              const ventureIdx = stageOrder.indexOf(ventureStage);
+              const hasAdjacentMatch = preferredStages.some((s) => {
+                const prefIdx = stageOrder.indexOf(s);
+                return Math.abs(prefIdx - ventureIdx) === 1;
+              });
+              stageScore = hasAdjacentMatch ? 15 : 8;
+            }
+          } else {
+            stageScore = 18; // No preference set — neutral
+          }
+
+          // Factor 3: Geography alignment (15 points)
+          let geoScore = 0;
+          if (prefs?.preferredGeographies && Array.isArray(prefs.preferredGeographies)) {
+            const preferredGeos = prefs.preferredGeographies as string[];
+            const ventureCountryLower = ventureCountry?.toLowerCase() ?? "";
+            const hasGeoMatch = preferredGeos.some((g) =>
+              g.toLowerCase().includes(ventureCountryLower) ||
+              ventureCountryLower.includes(g.toLowerCase()) ||
+              g.toLowerCase() === "africa" ||
+              g.toLowerCase() === "east africa" ||
+              g.toLowerCase() === "sub-saharan africa"
+            );
+            geoScore = hasGeoMatch ? 15 : (ventureCountry ? 8 : 5);
+          } else {
+            geoScore = 12; // No preference — neutral
+          }
+
+          // Factor 4: AI impact & thesis alignment (20 points)
+          let aiAlignmentScore = 0;
+          if (aiAnalysis) {
+            const impactScore = (aiAnalysis.impactScore as number) ?? 50;
+            const sectorAlignment = (aiAnalysis.sectorAlignment as number) ?? 50;
+            const diasporaRelevance = (aiAnalysis.diasporaRelevance as number) ?? 50;
+            // Normalize to 20-point scale
+            aiAlignmentScore = Math.round(((impactScore * 0.4 + sectorAlignment * 0.4 + diasporaRelevance * 0.2) / 100) * 20);
+          } else {
+            aiAlignmentScore = 10; // No AI analysis yet — neutral
+          }
+
+          // Factor 5: Venture quality signal (10 points)
+          const aiReadiness = (venture.aiReadinessScore as number) ?? 0;
+          const qualityScore = aiReadiness > 0 ? Math.round((aiReadiness / 100) * 10) : 6;
+
+          // ── COMPOSITE COMPATIBILITY SCORE ────────────────────────────
+          const rawScore = sectorScore + stageScore + geoScore + aiAlignmentScore + qualityScore;
+          const compatibilityScore = Math.min(100, Math.max(30, rawScore));
+
+          // ── MATCH RATIONALE ──────────────────────────────────────────
+          const rationaleFactors: string[] = [];
+          if (sectorScore >= 25) rationaleFactors.push("strong sector alignment");
+          if (stageScore >= 20) rationaleFactors.push("preferred funding stage");
+          if (geoScore >= 12) rationaleFactors.push("geographic fit");
+          if (aiAlignmentScore >= 15) rationaleFactors.push("high impact potential");
+          if (qualityScore >= 8) rationaleFactors.push("strong AI readiness score");
+          const rationale = rationaleFactors.length > 0
+            ? `Matched based on: ${rationaleFactors.join(", ")}. This venture aligns with the platform's investment thesis for Sudan/Africa economic development.`
+            : `Potential opportunity in ${ventureStage} stage. Review venture details for full alignment assessment.`;
+
           await createMatch({
             ventureId: input.ventureId,
             investorId: investor.id,
-            compatibilityScore: score,
-            matchRationale: `Strong alignment in ${venture.stage} stage ventures with sector compatibility.`,
-            matchFactors: { sector: true, stage: true, geography: !!venture.country },
+            compatibilityScore,
+            matchRationale: rationale,
+            matchFactors: {
+              sector: sectorScore >= 20,
+              stage: stageScore >= 20,
+              geography: geoScore >= 12,
+              impactAlignment: aiAlignmentScore >= 12,
+              ventureQuality: qualityScore >= 7,
+            },
           });
-          await createNotification({
-            userId: investor.id,
-            type: "new_match",
-            title: `New matching opportunity: ${venture.title}`,
-            titleAr: `فرصة مطابقة جديدة: ${venture.titleAr ?? venture.title}`,
-            body: `Compatibility score: ${score}%`,
-            referenceId: input.ventureId,
-            referenceType: "venture",
-          });
+
+          // Only notify investors with high compatibility (>= 65)
+          if (compatibilityScore >= 65) {
+            await createNotification({
+              userId: investor.id,
+              type: "new_match",
+              title: `New matching opportunity: ${venture.title}`,
+              titleAr: `فرصة مطابقة جديدة: ${venture.titleAr ?? venture.title}`,
+              body: `Compatibility score: ${compatibilityScore}% — ${rationaleFactors[0] ?? "Review opportunity"}`,
+              referenceId: input.ventureId,
+              referenceType: "venture",
+            });
+          }
         }
         return { success: true };
       }),

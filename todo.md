@@ -55,3 +55,14 @@
 - [x] Security hardening review
 - [x] TypeScript strict mode — zero errors
 - [x] Checkpoint and publish
+
+## Phase 9: AI Scoring Enhancement & Missing Features
+- [x] Customize AI scoring prompt with platform investment thesis (Sudan/Africa focus, sector priorities, diaspora lens, impact weighting)
+- [x] Add impactScore dimension to AI scoring (social/economic impact for Sudan/Africa)
+- [x] Add diasporaRelevance dimension (alignment with diaspora investment interests)
+- [x] Add sectorAlignmentScore dimension (fit with 7 priority sectors)
+- [x] Add regulatoryRisk dimension specific to Sudan/African markets
+- [x] Enhance user context in AI prompt (sector, subsector, funding target, team size, country)
+- [x] Sector seed data — auto-seeded on first sectors.list call
+- [x] Investment thesis alignment scoring in matching engine (5-factor: sector, stage, geography, AI impact, quality)
+- [x] Update vitest tests to cover new AI scoring dimensions (58 tests passing, 2 test files)
