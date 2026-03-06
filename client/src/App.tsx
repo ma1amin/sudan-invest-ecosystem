@@ -15,6 +15,10 @@ import Profile from "./pages/Profile";
 import AdminPanel from "./pages/AdminPanel";
 import Diaspora from "./pages/Diaspora";
 import Documents from "./pages/Documents";
+import FounderProgress from "./pages/FounderProgress";
+import KYCVerification from "./pages/KYCVerification";
+import VentureCompare from "./pages/VentureCompare";
+import DiasporaDealRoom from "./pages/DiasporaDealRoom";
 
 function Router() {
   return (
@@ -30,6 +34,10 @@ function Router() {
       <Route path="/diaspora" component={Diaspora} />
       <Route path="/documents" component={Documents} />
       <Route path="/admin" component={AdminPanel} />
+      <Route path="/progress" component={FounderProgress} />
+      <Route path="/kyc" component={KYCVerification} />
+      <Route path="/ventures/compare" component={VentureCompare} />
+      <Route path="/diaspora/deals" component={DiasporaDealRoom} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

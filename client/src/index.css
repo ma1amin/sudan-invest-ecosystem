@@ -196,4 +196,54 @@
       max-width: 1280px; /* Standard content width */
     }
   }
+
+  /* ─── RTL Logical Property Helpers ─── */
+  [dir='rtl'] .border-l { border-left: none; border-right: 1px solid var(--border); }
+  [dir='rtl'] .border-r { border-right: none; border-left: 1px solid var(--border); }
+  [dir='rtl'] .rounded-l-lg { border-radius: 0 0.5rem 0.5rem 0; }
+  [dir='rtl'] .rounded-r-lg { border-radius: 0.5rem 0 0 0.5rem; }
+
+  /* ─── Mobile-first scroll fixes ─── */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  /* ─── Focus rings for accessibility ─── */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* ─── Smooth page transitions ─── */
+  .page-enter {
+    animation: fadeIn 0.2s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Trust badge styles ─── */
+  .trust-badge-verified { @apply bg-emerald-100 text-emerald-800 border border-emerald-200; }
+  .trust-badge-pending  { @apply bg-amber-100 text-amber-800 border border-amber-200; }
+  .trust-badge-rejected { @apply bg-red-100 text-red-800 border border-red-200; }
+
+  /* ─── AI Score gradient bars ─── */
+  .score-bar-high   { @apply bg-emerald-500; }
+  .score-bar-medium { @apply bg-amber-500; }
+  .score-bar-low    { @apply bg-red-500; }
+
+  /* ─── Mobile card grid ─── */
+  .card-grid-responsive {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  @media (min-width: 640px) {
+    .card-grid-responsive { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .card-grid-responsive { grid-template-columns: repeat(3, 1fr); }
+  }
 }

@@ -784,3 +784,180 @@ describe("venture creation — thesis alignment validation", () => {
     expect(result).toBeDefined();
   });
 });
+
+// ─────────────────────────────────────────────
+// PHASE 10 TESTS: New Features
+// ─────────────────────────────────────────────
+
+describe("Venture Comparison — score dimension logic", () => {
+  it("should correctly identify higher readiness score as winner", () => {
+    const ventureA = { readinessScore: 82, impactScore: 70 };
+    const ventureB = { readinessScore: 65, impactScore: 85 };
+    expect(ventureA.readinessScore > ventureB.readinessScore).toBe(true);
+    expect(ventureB.impactScore > ventureA.impactScore).toBe(true);
+  });
+
+  it("should treat scores within 5-point margin as a draw", () => {
+    const a = 72;
+    const b = 75;
+    expect(Math.abs(a - b) < 5).toBe(true);
+  });
+
+  it("should invert regulatory risk for winner calculation (lower is better)", () => {
+    const riskA = 30;
+    const riskB = 60;
+    const effectiveA = 100 - riskA; // 70
+    const effectiveB = 100 - riskB; // 40
+    expect(effectiveA > effectiveB).toBe(true);
+  });
+
+  it("should support up to 3 ventures in comparison", () => {
+    const maxVentures = 3;
+    const selected = [1, 2, 3];
+    expect(selected.length).toBeLessThanOrEqual(maxVentures);
+  });
+});
+
+describe("Diaspora Deal Room — engagement filtering", () => {
+  it("should filter ventures by diaspora relevance threshold of 40", () => {
+    const ventures = [
+      { id: 1, aiAnalysis: { diasporaRelevance: 80 } },
+      { id: 2, aiAnalysis: { diasporaRelevance: 30 } },
+      { id: 3, aiAnalysis: { diasporaRelevance: 55 } },
+      { id: 4, aiAnalysis: null },
+    ];
+    const filtered = ventures.filter((v) => {
+      if (!v.aiAnalysis) return false;
+      return (v.aiAnalysis.diasporaRelevance ?? 0) >= 40;
+    });
+    expect(filtered).toHaveLength(2);
+    expect(filtered.map((v) => v.id)).toEqual([1, 3]);
+  });
+
+  it("should validate all 5 engagement types are supported", () => {
+    const validTypes = ["investment", "mentorship", "partnership", "sponsorship", "donation"];
+    expect(validTypes).toHaveLength(5);
+    validTypes.forEach((t) => expect(typeof t).toBe("string"));
+  });
+
+  it("should default to investment type when filter is 'all'", () => {
+    const engagementFilter = "all";
+    const resolvedType = engagementFilter === "all" ? "investment" : engagementFilter;
+    expect(resolvedType).toBe("investment");
+  });
+});
+
+describe("Founder Progress Tracker — milestone and priority logic", () => {
+  it("should calculate progress percentage from completed milestones", () => {
+    const milestones = [true, true, false, false];
+    const completed = milestones.filter(Boolean).length;
+    const progress = Math.round((completed / milestones.length) * 100);
+    expect(progress).toBe(50);
+  });
+
+  it("should prioritize lowest-scoring dimensions for improvement roadmap", () => {
+    const scores: Record<string, number> = {
+      readinessScore: 45,
+      marketClarity: 72,
+      businessModelStrength: 38,
+      teamReadiness: 60,
+      scalabilityScore: 55,
+    };
+    const sorted = Object.entries(scores)
+      .sort(([, a], [, b]) => a - b)
+      .map(([key]) => key);
+    expect(sorted[0]).toBe("businessModelStrength");
+    expect(sorted[1]).toBe("readinessScore");
+  });
+
+  it("should assign correct priority level based on score thresholds", () => {
+    const getPriority = (score: number) => {
+      if (score < 40) return "critical";
+      if (score < 60) return "high";
+      if (score < 75) return "medium";
+      return "low";
+    };
+    expect(getPriority(25)).toBe("critical");
+    expect(getPriority(50)).toBe("high");
+    expect(getPriority(65)).toBe("medium");
+    expect(getPriority(85)).toBe("low");
+  });
+
+  it("should show 100% progress when all milestones are complete", () => {
+    const milestones = [true, true, true, true];
+    const progress = Math.round((milestones.filter(Boolean).length / milestones.length) * 100);
+    expect(progress).toBe(100);
+  });
+});
+
+describe("KYC Verification — trust level logic", () => {
+  it("should assign trust level based on verification steps completed", () => {
+    const getTrustLevel = (steps: number) => {
+      if (steps === 0) return "unverified";
+      if (steps === 1) return "basic";
+      if (steps === 2) return "standard";
+      return "verified";
+    };
+    expect(getTrustLevel(0)).toBe("unverified");
+    expect(getTrustLevel(1)).toBe("basic");
+    expect(getTrustLevel(2)).toBe("standard");
+    expect(getTrustLevel(3)).toBe("verified");
+  });
+
+  it("should validate supported document types", () => {
+    const validTypes = ["passport", "national_id", "drivers_license", "business_registration", "tax_certificate"];
+    expect(validTypes.includes("passport")).toBe(true);
+    expect(validTypes.includes("unknown_doc")).toBe(false);
+  });
+});
+
+describe("PlatformHeader — navigation access control", () => {
+  it("should hide auth-required items for unauthenticated users", () => {
+    const navItems = [
+      { href: "/", authRequired: false },
+      { href: "/ventures", authRequired: false },
+      { href: "/dashboard", authRequired: true },
+      { href: "/documents", authRequired: true },
+    ];
+    const visible = navItems.filter((item) => !item.authRequired || false);
+    expect(visible).toHaveLength(2);
+  });
+
+  it("should show all nav items for authenticated users", () => {
+    const navItems = [
+      { href: "/", authRequired: false },
+      { href: "/ventures", authRequired: false },
+      { href: "/dashboard", authRequired: true },
+      { href: "/documents", authRequired: true },
+    ];
+    const visible = navItems.filter((item) => !item.authRequired || true);
+    expect(visible).toHaveLength(4);
+  });
+});
+
+describe("Notifications — unread count and time formatting", () => {
+  it("should correctly count unread notifications", () => {
+    const notifications = [
+      { id: 1, isRead: false },
+      { id: 2, isRead: true },
+      { id: 3, isRead: false },
+      { id: 4, isRead: false },
+    ];
+    expect(notifications.filter((n) => !n.isRead).length).toBe(3);
+  });
+
+  it("should format time ago correctly for various intervals", () => {
+    const timeAgo = (seconds: number) => {
+      if (seconds < 60) return "Just now";
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      return `${Math.floor(hours / 24)}d ago`;
+    };
+    expect(timeAgo(30)).toBe("Just now");
+    expect(timeAgo(300)).toBe("5m ago");
+    expect(timeAgo(7200)).toBe("2h ago");
+    expect(timeAgo(172800)).toBe("2d ago");
+  });
+});

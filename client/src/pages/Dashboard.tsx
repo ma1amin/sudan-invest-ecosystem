@@ -119,6 +119,8 @@ export default function Dashboard() {
         common[0],
         { id: "ventures", icon: Building2, labelEn: "My Ventures", labelAr: "مشاريعي" },
         { id: "matches", icon: Zap, labelEn: "Matches", labelAr: "المطابقات" },
+        { id: "progress", icon: TrendingUp, labelEn: "Progress Tracker", labelAr: "مسار التقدم", href: "/progress" },
+        { id: "kyc", icon: Shield, labelEn: "Verification", labelAr: "التحقق", href: "/kyc" },
         { id: "documents", icon: FileText, labelEn: "Documents", labelAr: "المستندات" },
         ...common.slice(1),
       ];
@@ -128,6 +130,7 @@ export default function Dashboard() {
         common[0],
         { id: "opportunities", icon: TrendingUp, labelEn: "Opportunities", labelAr: "الفرص" },
         { id: "matches", icon: Zap, labelEn: "Matches", labelAr: "المطابقات" },
+        { id: "compare", icon: BarChart3, labelEn: "Compare Ventures", labelAr: "مقارنة المشاريع", href: "/ventures/compare" },
         { id: "analytics", icon: BarChart3, labelEn: "Analytics", labelAr: "التحليلات" },
         { id: "documents", icon: FileText, labelEn: "Documents", labelAr: "المستندات" },
         ...common.slice(1),
@@ -146,6 +149,7 @@ export default function Dashboard() {
         common[0],
         { id: "opportunities", icon: Globe, labelEn: "Opportunities", labelAr: "الفرص" },
         { id: "engagements", icon: Star, labelEn: "My Engagements", labelAr: "مشاركاتي" },
+        { id: "deals", icon: Building2, labelEn: "Deal Room", labelAr: "غرفة الصفقات", href: "/diaspora/deals" },
         ...common.slice(1),
       ];
     }
@@ -182,6 +186,8 @@ export default function Dashboard() {
       else navigate("/ventures");
     } else if (item.id === "documents") {
       navigate("/documents");
+    } else if (item.href) {
+      navigate(item.href);
     } else setActiveSection(item.id);
   };
 
