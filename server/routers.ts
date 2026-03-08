@@ -210,14 +210,14 @@ export const appRouter = router({
             messages: [
               {
                 role: "system",
-                content: `You are a senior venture analyst for the Sudan Innovation & Investment Ecosystem — a trusted AI-powered platform connecting Sudanese and African entrepreneurs with investors, mentors, and diaspora supporters to accelerate economic rebuilding and innovation.
+                content: `You are a senior venture analyst for the Sudan Innovation & Investment Ecosystem — a trusted AI-powered platform connecting Sudanese entrepreneurs with investors, mentors, and diaspora supporters to accelerate Sudan's economic rebuilding and innovation.
 
 ## PLATFORM INVESTMENT THESIS
 This platform prioritizes ventures that:
-1. Address real market gaps in Sudan and the broader African context (post-conflict economic recovery, infrastructure deficits, underserved populations)
+1. Address real market gaps in Sudan (post-conflict economic recovery, infrastructure deficits, underserved Sudanese populations)
 2. Operate in priority sectors: AgriTech, Renewable Energy, FinTech & Digital Finance, Logistics & Mobility, Healthcare & MedTech, EdTech, and Technology & Digital Transformation
 3. Demonstrate potential for meaningful social and economic impact (job creation, youth empowerment, diaspora capital mobilization)
-4. Are founded or co-founded by Sudanese nationals or African entrepreneurs with deep market understanding
+4. Are founded or co-founded by Sudanese nationals or entrepreneurs with deep understanding of the Sudanese market
 5. Show a viable path to sustainability — not purely grant-dependent
 6. Have diaspora relevance — potential to attract Sudanese diaspora investment, mentorship, or partnerships
 7. Demonstrate awareness of and resilience to local regulatory, political, and infrastructure risks
@@ -227,13 +227,13 @@ Evaluate the venture across these 9 dimensions (each scored 0–100):
 
 1. **readinessScore** (0–100): Composite overall readiness. Weight: marketClarity (25%), businessModelStrength (20%), teamReadiness (20%), scalabilityScore (15%), impactScore (10%), diasporaRelevance (5%), sectorAlignment (5%).
 
-2. **marketClarity** (0–100): How clearly defined and validated is the target market? Consider: problem specificity, evidence of demand, customer segment clarity, market size awareness in the Sudanese/African context.
+2. **marketClarity** (0–100): How clearly defined and validated is the target market? Consider: problem specificity, evidence of demand, customer segment clarity, market size awareness in the Sudanese context.
 
 3. **businessModelStrength** (0–100): How robust and sustainable is the revenue model? Consider: revenue streams, unit economics awareness, path to profitability, pricing strategy, and avoidance of pure grant dependency.
 
 4. **teamReadiness** (0–100): Does the team have the capability to execute? Consider: relevant domain expertise, founding team composition, local market knowledge, prior entrepreneurial experience, and team size relative to stage.
 
-5. **scalabilityScore** (0–100): What is the potential for regional or continental scale? Consider: technology leverage, replicability across African markets, network effects, and infrastructure independence.
+5. **scalabilityScore** (0–100): What is the potential for regional scale? Consider: technology leverage, replicability across Sudanese states and MENA markets, network effects, and infrastructure independence.
 
 6. **impactScore** (0–100): What is the projected social and economic impact? Consider: job creation potential, youth and women empowerment, contribution to national economic recovery, food security, energy access, financial inclusion, or healthcare access.
 
@@ -245,7 +245,7 @@ Evaluate the venture across these 9 dimensions (each scored 0–100):
 
 ## OUTPUT REQUIREMENTS
 Also provide:
-- **riskIndicators** (array of strings): Specific risk factors relevant to Sudan/Africa context. Be precise — avoid generic statements.
+- **riskIndicators** (array of strings): Specific risk factors relevant to the Sudan context (regulatory, currency, infrastructure, security, political). Be precise — avoid generic statements.
 - **strengths** (array of strings): Genuine differentiating strengths, especially those relevant to the platform's thesis.
 - **recommendations** (array of strings): Actionable, specific improvement steps the founder can take to increase readiness and investor attractiveness on this platform.
 - **summary** (string): A 3-sentence executive summary written for an investor reviewing this venture on the platform. Mention sector, stage, impact potential, and key concern.
@@ -276,7 +276,7 @@ ${venture.description}
 
 ${venture.website ? `**Website:** ${venture.website}` : ""}
 
-Please evaluate this venture against the platform's investment thesis and scoring framework. Be specific to the Sudan/Africa context in your analysis.`,
+Please evaluate this venture against the platform's investment thesis and scoring framework. Be specific to the Sudan context — reference Sudanese market conditions, regulatory environment, and economic recovery priorities in your analysis.`,
               },
             ],
             response_format: {
@@ -478,9 +478,9 @@ Please evaluate this venture against the platform's investment thesis and scorin
             const hasGeoMatch = preferredGeos.some((g) =>
               g.toLowerCase().includes(ventureCountryLower) ||
               ventureCountryLower.includes(g.toLowerCase()) ||
-              g.toLowerCase() === "africa" ||
-              g.toLowerCase() === "east africa" ||
-              g.toLowerCase() === "sub-saharan africa"
+              g.toLowerCase() === "sudan" ||
+              g.toLowerCase() === "khartoum" ||
+              g.toLowerCase() === "east africa"
             );
             geoScore = hasGeoMatch ? 15 : (ventureCountry ? 8 : 5);
           } else {
@@ -515,7 +515,7 @@ Please evaluate this venture against the platform's investment thesis and scorin
           if (aiAlignmentScore >= 15) rationaleFactors.push("high impact potential");
           if (qualityScore >= 8) rationaleFactors.push("strong AI readiness score");
           const rationale = rationaleFactors.length > 0
-            ? `Matched based on: ${rationaleFactors.join(", ")}. This venture aligns with the platform's investment thesis for Sudan/Africa economic development.`
+            ? `Matched based on: ${rationaleFactors.join(", ")}. This venture aligns with the platform's investment thesis for Sudan's economic rebuilding and development.`
             : `Potential opportunity in ${ventureStage} stage. Review venture details for full alignment assessment.`;
 
           await createMatch({

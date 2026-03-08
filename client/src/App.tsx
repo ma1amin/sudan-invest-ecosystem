@@ -27,17 +27,17 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/ventures" component={Ventures} />
       <Route path="/ventures/submit" component={VentureSubmit} />
+      <Route path="/ventures/compare" component={VentureCompare} />
       <Route path="/ventures/:id" component={VentureDetail} />
       <Route path="/messages" component={Messages} />
       <Route path="/messages/:userId" component={Messages} />
       <Route path="/profile" component={Profile} />
       <Route path="/diaspora" component={Diaspora} />
+      <Route path="/diaspora/deals" component={DiasporaDealRoom} />
       <Route path="/documents" component={Documents} />
       <Route path="/admin" component={AdminPanel} />
       <Route path="/progress" component={FounderProgress} />
       <Route path="/kyc" component={KYCVerification} />
-      <Route path="/ventures/compare" component={VentureCompare} />
-      <Route path="/diaspora/deals" component={DiasporaDealRoom} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

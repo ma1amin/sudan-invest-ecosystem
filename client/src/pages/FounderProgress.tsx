@@ -92,11 +92,11 @@ function buildDimensions(analysis: AIAnalysis, isRTL: boolean): AIDimension[] {
       score: analysis.marketClarity ?? 0,
       icon: <Target className="w-5 h-5" />,
       color: "blue",
-      description: "How clearly you have defined your target market, customer segments, and validated demand in the Sudanese/African context.",
-      descriptionAr: "مدى وضوح تعريفك للسوق المستهدف وشرائح العملاء والطلب المُتحقق منه في السياق السوداني/الأفريقي.",
+      description: "How clearly you have defined your target market, customer segments, and validated demand in the Sudanese market context.",
+      descriptionAr: "مدى وضوح تعريفك للسوق المستهدف وشرائح العملاء والطلب المُتحقق منه في السياق السوداني.",
       resources: [
         { title: "Customer Discovery Framework", titleAr: "إطار اكتشاف العملاء", action: "Conduct 20 customer interviews in your target market" },
-        { title: "Market Sizing Template", titleAr: "قالب تحديد حجم السوق", action: "Document TAM, SAM, and SOM for Sudan/Africa" },
+        { title: "Market Sizing Template", titleAr: "قالب تحديد حجم السوق", action: "Document TAM, SAM, and SOM for the Sudanese market" },
         { title: "Problem Validation", titleAr: "التحقق من المشكلة", action: "Create a one-page problem validation summary with evidence" },
       ],
       milestones: [
@@ -155,10 +155,10 @@ function buildDimensions(analysis: AIAnalysis, isRTL: boolean): AIDimension[] {
       score: analysis.scalabilityScore ?? 0,
       icon: <TrendingUp className="w-5 h-5" />,
       color: "orange",
-      description: "The potential for regional or continental scale — technology leverage, replicability across African markets, and network effects.",
-      descriptionAr: "إمكانية التوسع الإقليمي أو القاري — الاستفادة من التكنولوجيا، وقابلية التكرار عبر الأسواق الأفريقية، وتأثيرات الشبكة.",
+      description: "The potential for regional scale — technology leverage, replicability across Sudanese regions and neighbouring markets, and network effects.",
+      descriptionAr: "إمكانية التوسع الإقليمي — الاستفادة من التكنولوجيا، وقابلية التكرار عبر الولايات السودانية والأسواق المجاورة، وتأثيرات الشبكة.",
       resources: [
-        { title: "Scalability Assessment", titleAr: "تقييم قابلية التوسع", action: "Document how the model replicates across 3 African markets" },
+        { title: "Scalability Assessment", titleAr: "تقييم قابلية التوسع", action: "Document how the model replicates across Sudanese states and neighbouring markets" },
         { title: "Technology Stack Review", titleAr: "مراجعة المكدس التقني", action: "Ensure technology can support 10x growth without redesign" },
         { title: "Expansion Roadmap", titleAr: "خارطة طريق التوسع", action: "Create 3-year geographic expansion plan" },
       ],
@@ -223,7 +223,7 @@ function buildDimensions(analysis: AIAnalysis, isRTL: boolean): AIDimension[] {
       resources: [
         { title: "Sector Positioning", titleAr: "تحديد موقع القطاع", action: "Clearly define your primary sector and subsectors in your profile" },
         { title: "Sector Narrative", titleAr: "سرد القطاع", action: "Write a 200-word sector context statement for your venture" },
-        { title: "Sector Benchmarking", titleAr: "قياس أداء القطاع", action: "Research 3 comparable ventures in your sector across Africa" },
+        { title: "Sector Benchmarking", titleAr: "قياس أداء القطاع", action: "Research 3 comparable ventures in your sector within Sudan and the MENA region" },
       ],
       milestones: [
         { text: "Primary sector selected", textAr: "اختيار القطاع الأساسي", completed: (analysis.sectorAlignment ?? 0) >= 30 },

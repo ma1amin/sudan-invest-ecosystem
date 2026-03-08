@@ -89,7 +89,7 @@ export default function Dashboard() {
               {language === "en" ? "Sign in to access your dashboard" : "سجل الدخول للوصول إلى لوحة التحكم"}
             </h2>
             <p className="text-muted-foreground text-sm mb-6">
-              {language === "en" ? "Join Africa's trusted investment ecosystem." : "انضم إلى النظام البيئي الاستثماري الموثوق في أفريقيا."}
+              {language === "en" ? "Join Sudan's trusted investment ecosystem." : "انضم إلى النظام البيئي الاستثماري الموثوق في السودان."}
             </p>
             <a href={getLoginUrl()}>
               <Button className="w-full h-11 font-semibold">

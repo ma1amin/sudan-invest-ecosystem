@@ -120,3 +120,17 @@
 - 4 reusable components
 - Full bilingual AR/EN RTL/LTR support
 - All routes registered in App.tsx
+
+## Phase 11: Route Audit & Sudan Branding Fix
+- [ ] Audit all routes in App.tsx vs sidebar links in Dashboard.tsx
+- [ ] Audit all internal hrefs in PlatformHeader, Home, Ventures, VentureDetail, Diaspora, DiasporaDealRoom
+- [ ] Fix any broken or mismatched routes
+- [ ] Replace all "African" / "Africa's" language with "Sudanese" / "Sudan's" in Home.tsx
+- [ ] Replace all "African" / "Africa's" language in Dashboard.tsx
+- [ ] Replace all "African" / "Africa's" language in PlatformHeader.tsx
+- [ ] Replace all "African" / "Africa's" language in Ventures.tsx, VentureDetail.tsx
+- [ ] Replace all "African" / "Africa's" language in Diaspora.tsx, DiasporaDealRoom.tsx
+- [ ] Replace all "African" / "Africa's" language in VentureSubmit.tsx, FounderProgress.tsx
+- [ ] Replace all "African" / "Africa's" language in server/routers.ts AI prompt
+- [ ] Verify Arabic translations also reflect Sudan-specific context
+- [ ] Run vitest (75 tests) and TypeScript check (0 errors)

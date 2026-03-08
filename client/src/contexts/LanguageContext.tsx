@@ -25,10 +25,10 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.logout": "Sign Out",
 
     // Landing Hero
-    "hero.badge": "Africa's Innovation Ecosystem",
-    "hero.title": "Where African Ventures Meet Global Capital",
+    "hero.badge": "Sudan's Innovation & Investment Ecosystem",
+    "hero.title": "Where Sudanese Ventures Meet Global Capital",
     "hero.subtitle":
-      "A trusted AI-powered platform connecting founders, investors, mentors, and diaspora to accelerate Africa's economic transformation.",
+      "A trusted AI-powered platform connecting Sudanese founders, investors, mentors, and diaspora to accelerate Sudan's economic transformation and rebuilding.",
     "hero.cta.primary": "Join the Waitlist",
     "hero.cta.secondary": "Explore the Platform",
     "hero.stat.founders": "Founders",
@@ -64,7 +64,7 @@ const translations: Record<Language, Record<string, string>> = {
       "Discover verified opportunities with AI risk insights and intelligent matching tailored to your investment thesis.",
     "value.mentors.title": "For Mentors",
     "value.mentors.desc":
-      "Share your expertise with the next generation of African entrepreneurs and track your impact.",
+      "Share your expertise with the next generation of Sudanese entrepreneurs and track your impact.",
     "value.diaspora.title": "For Diaspora",
     "value.diaspora.desc":
       "Invest, mentor, partner, or sponsor initiatives that drive meaningful change in your home country.",
@@ -158,10 +158,10 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.logout": "تسجيل الخروج",
 
     // Landing Hero
-    "hero.badge": "منظومة الابتكار الأفريقية",
-    "hero.title": "حيث تلتقي المشاريع الأفريقية برأس المال العالمي",
+    "hero.badge": "منظومة الابتكار والاستثمار السودانية",
+    "hero.title": "حيث تلتقي المشاريع السودانية برأس المال العالمي",
     "hero.subtitle":
-      "منصة موثوقة مدعومة بالذكاء الاصطناعي تربط المؤسسين والمستثمرين والمرشدين والمغتربين لتسريع التحول الاقتصادي في أفريقيا.",
+      "منصة موثوقة مدعومة بالذكاء الاصطناعي تربط المؤسسين السودانيين والمستثمرين والمرشدين والمغتربين لتسريع التحول الاقتصادي وإعادة بناء السودان.",
     "hero.cta.primary": "انضم لقائمة الانتظار",
     "hero.cta.secondary": "استكشف المنصة",
     "hero.stat.founders": "مؤسس",
@@ -196,7 +196,7 @@ const translations: Record<Language, Record<string, string>> = {
       "اكتشف فرصاً موثقة مع رؤى المخاطر الذكية والمطابقة الذكية المصممة لفلسفتك الاستثمارية.",
     "value.mentors.title": "للمرشدين",
     "value.mentors.desc":
-      "شارك خبرتك مع الجيل القادم من رواد الأعمال الأفارقة وتابع تأثيرك.",
+      "شارك خبرتك مع الجيل القادم من رواد الأعمال السودانيين وتابع تأثيرك.",
     "value.diaspora.title": "للمغتربين",
     "value.diaspora.desc":
       "استثمر أو أرشد أو شارك أو ادعم مبادرات تحدث تغييراً حقيقياً في وطنك.",

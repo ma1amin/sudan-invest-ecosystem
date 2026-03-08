@@ -63,8 +63,8 @@ const FEATURES = [
     color: "text-teal-600 bg-teal-50",
     titleEn: "Diaspora Engagement",
     titleAr: "مشاركة المغتربين",
-    descEn: "A dedicated channel for the global African diaspora to invest, mentor, partner, and sponsor ventures — bridging global capital with local opportunity.",
-    descAr: "قناة مخصصة للمغتربين الأفارقة العالميين للاستثمار والإرشاد والشراكة ورعاية المشاريع — تربط رأس المال العالمي بالفرص المحلية.",
+    descEn: "A dedicated channel for the global Sudanese diaspora to invest, mentor, partner, and sponsor ventures — bridging global capital with local opportunity.",
+    descAr: "قناة مخصصة للمغتربين السودانيين العالميين للاستثمار والإرشاد والشراكة ورعاية المشاريع — تربط رأس المال العالمي بالفرص السودانية.",
   },
   {
     icon: BarChart3,
@@ -170,7 +170,7 @@ export default function Home() {
               <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-6">
                 {language === "en" ? (
                   <>
-                    Africa's Trusted<br />
+                    Sudan's Trusted<br />
                     <span className="text-primary">Investment</span> &<br />
                     Innovation Platform
                   </>
@@ -185,8 +185,8 @@ export default function Home() {
 
               <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-lg">
                 {language === "en"
-                  ? "Connecting African founders with global investors, mentors, and diaspora supporters through AI-powered matching, verified profiles, and transparent evaluation."
-                  : "ربط المؤسسين الأفارقة بالمستثمرين العالميين والمرشدين والمغتربين من خلال المطابقة الذكية والملفات الموثقة والتقييم الشفاف."}
+                  ? "Connecting Sudanese founders with global investors, mentors, and diaspora supporters through AI-powered matching, verified profiles, and transparent evaluation."
+                  : "ربط المؤسسين السودانيين بالمستثمرين العالميين والمرشدين والمغتربين من خلال المطابقة الذكية والملفات الموثقة والتقييم الشفاف."}
               </p>
 
               <div className="flex flex-wrap gap-4 mb-8">
@@ -236,7 +236,7 @@ export default function Home() {
               {language === "en" ? "Priority Sectors" : "القطاعات ذات الأولوية"}
             </h2>
             <p className="text-muted-foreground">
-              {language === "en" ? "Focused on the sectors driving Africa's economic transformation" : "مركزون على القطاعات التي تقود التحول الاقتصادي لأفريقيا"}
+              {language === "en" ? "Focused on the sectors driving Sudan's economic transformation and rebuilding" : "مركزون على القطاعات التي تقود التحول الاقتصادي وإعادة بناء السودان"}
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -341,8 +341,8 @@ export default function Home() {
           <Star className="w-10 h-10 mx-auto mb-6 opacity-70" />
           <blockquote className="text-2xl font-semibold leading-relaxed mb-6 max-w-3xl mx-auto">
             {language === "en"
-              ? "\"Africa's next generation of entrepreneurs deserves a platform that matches their ambition — verified, intelligent, and built for trust.\""
-              : "\"يستحق رواد الأعمال الأفارقة من الجيل القادم منصة ترقى إلى مستوى طموحهم — موثقة وذكية ومبنية على الثقة.\""}
+              ? "\"Sudan's next generation of entrepreneurs deserves a platform that matches their ambition — verified, intelligent, and built for trust.\""
+              : "\"يستحق رواد الأعمال السودانيون من الجيل القادم منصة ترقى إلى مستوى طموحهم — موثقة وذكية ومبنية على الثقة.\""}
           </blockquote>
           <p className="text-primary-foreground/70 text-sm">
             {language === "en" ? "— Sudan Innovation & Investment Ecosystem Platform" : "— منصة الابتكار والاستثمار في السودان"}
@@ -467,8 +467,8 @@ export default function Home() {
             </div>
             <p className="text-muted-foreground text-sm text-center">
               {language === "en"
-                ? "Building Africa's most trusted investment and innovation platform."
-                : "بناء منصة الاستثمار والابتكار الأكثر موثوقية في أفريقيا."}
+                ? "Building Sudan's most trusted investment and innovation platform."
+                : "بناء منصة الاستثمار والابتكار الأكثر موثوقية في السودان."}
             </p>
             <button onClick={toggleLanguage} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors">
               <Languages className="w-4 h-4" />
