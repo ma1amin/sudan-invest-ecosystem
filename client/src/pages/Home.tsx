@@ -114,46 +114,9 @@ export default function Home() {
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-background font-sans">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border">
-        <div className="container flex items-center justify-between h-16">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-4 h-4 text-primary-foreground" />
-            </div>
-            <div>
-              <span className="font-bold text-foreground text-sm">Sudan Invest</span>
-              <span className="text-primary font-bold text-sm"> Ecosystem</span>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted"
-            >
-              <Languages className="w-4 h-4" />
-              <span>{language === "en" ? "العربية" : "English"}</span>
-            </button>
-
-            {!loading && (
-              isAuthenticated ? (
-                <Button size="sm" onClick={() => navigate("/dashboard")}>
-                  {language === "en" ? "Dashboard" : "لوحة التحكم"}
-                  <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180 mr-1" : "ml-1"}`} />
-                </Button>
-              ) : (
-                <a href={getLoginUrl()}>
-                  <Button size="sm">{t("nav.login")}</Button>
-                </a>
-              )
-            )}
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="pt-24 pb-20 px-4 relative overflow-hidden">
+      {/* Hero Section — PlatformHeader is rendered globally in App.tsx */}
+      <section className="pt-16 pb-20 px-4 relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-teal-500/5 pointer-events-none" />
         <div className="absolute top-20 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />

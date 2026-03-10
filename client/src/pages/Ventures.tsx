@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
 import { useState } from "react";
-import { Search, Building2, TrendingUp, MapPin, Users, ArrowLeft, Zap } from "lucide-react";
+import { Search, Building2, TrendingUp, MapPin, Users, Zap } from "lucide-react";
 
 const STAGE_COLORS: Record<string, string> = {
   idea: "bg-gray-100 text-gray-700",
@@ -42,15 +42,10 @@ export default function Ventures() {
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-muted/30">
-      <header className="bg-white border-b border-border px-6 py-4 flex items-center gap-4">
-        <button onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className={`w-5 h-5 ${isRTL ? "rotate-180" : ""}`} />
-        </button>
-        <div className="flex-1">
-          <h1 className="font-bold text-foreground">{language === "en" ? "Investment Opportunities" : "فرص الاستثمار"}</h1>
-          <p className="text-muted-foreground text-sm">{language === "en" ? "Verified ventures seeking investment" : "مشاريع موثقة تبحث عن استثمار"}</p>
-        </div>
-      </header>
+      <div className="bg-white border-b border-border px-6 py-4">
+        <h1 className="font-bold text-foreground">{language === "en" ? "Investment Opportunities" : "فرص الاستثمار"}</h1>
+        <p className="text-muted-foreground text-sm">{language === "en" ? "Verified ventures seeking investment" : "مشاريع موثقة تبحث عن استثمار"}</p>
+      </div>
 
       <div className="container py-8 max-w-5xl">
         {/* Search */}

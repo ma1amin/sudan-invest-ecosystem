@@ -127,16 +127,10 @@ export default function VentureSubmit() {
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-muted/30">
-      {/* Header */}
-      <header className="bg-white border-b border-border px-6 py-4 flex items-center gap-4">
-        <button onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className={`w-5 h-5 ${isRTL ? "rotate-180" : ""}`} />
-        </button>
-        <div>
-          <h1 className="font-bold text-foreground">{language === "en" ? "Submit Your Venture" : "تقديم مشروعك"}</h1>
-          <p className="text-muted-foreground text-sm">{language === "en" ? "Get AI-powered readiness scoring" : "احصل على تقييم الجاهزية الذكي"}</p>
-        </div>
-      </header>
+      <div className="bg-white border-b border-border px-6 py-4">
+        <h1 className="font-bold text-foreground">{language === "en" ? "Submit Your Venture" : "تقديم مشروعك"}</h1>
+        <p className="text-muted-foreground text-sm">{language === "en" ? "Get AI-powered readiness scoring" : "احصل على تقييم الجاهزية الذكي"}</p>
+      </div>
 
       <div className="container py-8 max-w-3xl">
         {step === "form" && (

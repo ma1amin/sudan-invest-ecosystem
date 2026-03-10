@@ -121,16 +121,66 @@
 - Full bilingual AR/EN RTL/LTR support
 - All routes registered in App.tsx
 
-## Phase 11: Route Audit & Sudan Branding Fix
-- [ ] Audit all routes in App.tsx vs sidebar links in Dashboard.tsx
-- [ ] Audit all internal hrefs in PlatformHeader, Home, Ventures, VentureDetail, Diaspora, DiasporaDealRoom
-- [ ] Fix any broken or mismatched routes
-- [ ] Replace all "African" / "Africa's" language with "Sudanese" / "Sudan's" in Home.tsx
-- [ ] Replace all "African" / "Africa's" language in Dashboard.tsx
-- [ ] Replace all "African" / "Africa's" language in PlatformHeader.tsx
-- [ ] Replace all "African" / "Africa's" language in Ventures.tsx, VentureDetail.tsx
-- [ ] Replace all "African" / "Africa's" language in Diaspora.tsx, DiasporaDealRoom.tsx
-- [ ] Replace all "African" / "Africa's" language in VentureSubmit.tsx, FounderProgress.tsx
-- [ ] Replace all "African" / "Africa's" language in server/routers.ts AI prompt
-- [ ] Verify Arabic translations also reflect Sudan-specific context
-- [ ] Run vitest (75 tests) and TypeScript check (0 errors)
+## Phase 11: Route Audit & Sudan Branding Fix [COMPLETE]
+- [x] Audit all routes in App.tsx vs sidebar links in Dashboard.tsx
+- [x] Audit all internal hrefs in PlatformHeader, Home, Ventures, VentureDetail, Diaspora, DiasporaDealRoom
+- [x] Fix route conflict: /ventures/compare declared before /ventures/:id
+- [x] Replace all "African" / "Africa's" language with "Sudanese" / "Sudan's" in Home.tsx
+- [x] Replace all "African" / "Africa's" language in Dashboard.tsx
+- [x] Replace all "African" / "Africa's" language in PlatformHeader.tsx
+- [x] Replace all "African" / "Africa's" language in Ventures.tsx, VentureDetail.tsx
+- [x] Replace all "African" / "Africa's" language in Diaspora.tsx, DiasporaDealRoom.tsx
+- [x] Replace all "African" / "Africa's" language in VentureSubmit.tsx, FounderProgress.tsx
+- [x] Replace all "African" / "Africa's" language in server/routers.ts AI prompt
+- [x] Verify Arabic translations also reflect Sudan-specific context
+- [x] Run vitest (75 tests) and TypeScript check (0 errors)
+
+## Phase 12: Global Header & Complete Platform Build [COMPLETE]
+
+### Critical Fix — Language Switcher on All Pages
+- [x] Global AppLayout wrapper in App.tsx with PlatformHeader on all routes
+- [x] Home.tsx: duplicate nav removed, PlatformHeader handles language switching
+- [x] Duplicate inline headers removed from all inner pages
+- [x] Language switcher available on all pages via global PlatformHeader
+
+### Missing Features — Profiles & Onboarding
+- [x] Enhanced Profile page (bio, LinkedIn, location, role badge, trust level)
+- [x] Trust badge display on profile and venture cards
+
+### Missing Features — Messaging
+- [x] Messages page: conversation list sidebar + message thread view
+- [x] Send/receive messages with polling
+- [x] Connection request flow
+
+### Missing Features — Analytics
+- [x] Dedicated /analytics route with Recharts charts
+- [x] Sector distribution, monthly submissions, match rate, investment flow charts
+
+### Missing Features — Admin Panel
+- [x] Moderation queue with approve/reject/request-revision
+- [x] KYC review queue with approve/reject
+- [x] Sector management: add/edit/delete sectors and subsectors
+- [x] User management: list all users, change roles
+
+### Missing Features — Notifications
+- [x] Full /notifications page with complete notification history
+- [x] Mark individual and all notifications as read
+- [x] Filter by type (match, message, venture update, system)
+
+### Missing Features — Diaspora Hub
+- [x] Diaspora engagement channels (invest, mentor, partner, sponsor, donate)
+- [x] Featured diaspora opportunities with sector and ticket size filters
+- [x] Diaspora Deal Room with one-click expression of interest
+
+### RTL & Mobile
+- [x] Full RTL layout pass on all pages (dir attribute, logical properties)
+- [x] Mobile responsive CSS utilities added
+- [x] Arabic font (Noto Sans Arabic) loaded via Google Fonts
+
+## Phase 12 Summary
+- 75 vitest tests passing (2 test files)
+- 0 TypeScript errors
+- 16 pages built
+- 5 reusable components
+- Global language/theme switcher on every page
+- All routes correctly registered and wired

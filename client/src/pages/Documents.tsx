@@ -141,18 +141,12 @@ export default function Documents() {
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-muted/30">
-      {/* Header */}
-      <header className="bg-white border-b border-border px-6 py-4 flex items-center gap-4">
-        <button onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className={`w-5 h-5 ${isRTL ? "rotate-180" : ""}`} />
-        </button>
-        <div>
-          <h1 className="font-bold text-foreground">{language === "en" ? "Document Vault" : "خزينة المستندات"}</h1>
-          <p className="text-muted-foreground text-sm">
-            {language === "en" ? "Secure cloud storage for your venture documents" : "تخزين سحابي آمن لمستندات مشروعك"}
-          </p>
-        </div>
-      </header>
+      <div className="bg-white border-b border-border px-6 py-4">
+        <h1 className="font-bold text-foreground">{language === "en" ? "Document Vault" : "خزينة المستندات"}</h1>
+        <p className="text-muted-foreground text-sm">
+          {language === "en" ? "Secure cloud storage for your venture documents" : "تخزين سحابي آمن لمستندات مشروعك"}
+        </p>
+      </div>
 
       <div className="container py-8 max-w-5xl space-y-6">
         {/* Security Notice */}

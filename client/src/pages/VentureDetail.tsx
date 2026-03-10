@@ -53,21 +53,10 @@ export default function VentureDetail() {
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-muted/30">
-      <header className="bg-white border-b border-border px-6 py-4 flex items-center gap-4">
-        <button onClick={() => navigate("/ventures")} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className={`w-5 h-5 ${isRTL ? "rotate-180" : ""}`} />
-        </button>
-        <div className="flex-1">
-          <h1 className="font-bold text-foreground">{venture.title}</h1>
-          {venture.tagline && <p className="text-muted-foreground text-sm">{venture.tagline}</p>}
-        </div>
-        {venture.aiReadinessScore !== null && (
-          <div className="text-center">
-            <div className={`text-2xl font-bold ${(venture.aiReadinessScore ?? 0) >= 70 ? "text-green-600" : "text-yellow-600"}`}>{venture.aiReadinessScore}</div>
-            <div className="text-xs text-muted-foreground flex items-center gap-1"><Zap className="w-3 h-3" /> AI Score</div>
-          </div>
-        )}
-      </header>
+      <div className="bg-white border-b border-border px-6 py-4">
+        <h1 className="font-bold text-foreground">{venture.title}</h1>
+        {venture.tagline && <p className="text-muted-foreground text-sm">{venture.tagline}</p>}
+      </div>
 
       <div className="container py-8 max-w-4xl space-y-6">
         {/* Meta */}

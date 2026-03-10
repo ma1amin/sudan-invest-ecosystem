@@ -181,6 +181,8 @@ export default function Dashboard() {
   const handleSidebarClick = (item: SidebarItem) => {
     if (item.id === "messages") navigate("/messages");
     else if (item.id === "profile") navigate("/profile");
+    else if (item.id === "notifications") navigate("/notifications");
+    else if (item.id === "analytics") navigate("/analytics");
     else if (item.id === "ventures" || item.id === "opportunities") {
       if (platformRole === "founder") navigate("/ventures/submit");
       else navigate("/ventures");

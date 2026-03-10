@@ -84,16 +84,11 @@ export default function AdminPanel() {
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-muted/30">
-      <header className="bg-white border-b border-border px-6 py-4 flex items-center gap-4">
-        <button onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className={`w-5 h-5 ${isRTL ? "rotate-180" : ""}`} />
-        </button>
-        <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-primary" />
-          <h1 className="font-bold text-foreground">{language === "en" ? "Admin Panel" : "لوحة الإدارة"}</h1>
-        </div>
-        <Badge className="bg-red-100 text-red-700 ml-2">Admin</Badge>
-      </header>
+      <div className="bg-white border-b border-border px-6 py-4 flex items-center gap-3">
+        <Shield className="w-5 h-5 text-primary" />
+        <h1 className="font-bold text-foreground">{language === "en" ? "Admin Panel" : "لوحة الإدارة"}</h1>
+        <Badge className="bg-red-100 text-red-700">Admin</Badge>
+      </div>
 
       <div className="container py-6 max-w-6xl">
         {/* Tabs */}

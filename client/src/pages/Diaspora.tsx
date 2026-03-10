@@ -40,15 +40,10 @@ export default function Diaspora() {
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-muted/30">
-      <header className="bg-white border-b border-border px-6 py-4 flex items-center gap-4">
-        <button onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className={`w-5 h-5 ${isRTL ? "rotate-180" : ""}`} />
-        </button>
-        <div>
-          <h1 className="font-bold text-foreground">{language === "en" ? "Diaspora Engagement" : "مشاركة المغتربين"}</h1>
-          <p className="text-muted-foreground text-sm">{language === "en" ? "Connect your global presence with local impact" : "اربط حضورك العالمي بالتأثير المحلي"}</p>
-        </div>
-      </header>
+      <div className="bg-white border-b border-border px-6 py-4">
+        <h1 className="font-bold text-foreground">{language === "en" ? "Diaspora Engagement" : "مشاركة المغتربين"}</h1>
+        <p className="text-muted-foreground text-sm">{language === "en" ? "Connect your global presence with local impact" : "اربط حضورك العالمي بالتأثير المحلي"}</p>
+      </div>
 
       <div className="container py-8 max-w-4xl space-y-8">
         {/* Hero */}

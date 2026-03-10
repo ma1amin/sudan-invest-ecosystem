@@ -1,10 +1,11 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { PlatformHeader } from "./components/PlatformHeader";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import VentureSubmit from "./pages/VentureSubmit";
@@ -19,28 +20,62 @@ import FounderProgress from "./pages/FounderProgress";
 import KYCVerification from "./pages/KYCVerification";
 import VentureCompare from "./pages/VentureCompare";
 import DiasporaDealRoom from "./pages/DiasporaDealRoom";
+import Analytics from "./pages/Analytics";
+import Notifications from "./pages/Notifications";
+
+/**
+ * Routes that use their own full-page layout (sidebar dashboards, etc.)
+ * These do NOT get the global PlatformHeader to avoid double headers.
+ */
+const STANDALONE_ROUTES = ["/dashboard", "/admin"];
+
+/**
+ * Global layout wrapper — PlatformHeader is rendered on all routes
+ * EXCEPT those listed in STANDALONE_ROUTES (which have their own layouts).
+ */
+function AppLayout({ children }: { children: React.ReactNode }) {
+  const [location] = useLocation();
+  const isStandalone = STANDALONE_ROUTES.some((r) => location === r || location.startsWith(r + "/"));
+
+  if (isStandalone) {
+    return <>{children}</>;
+  }
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <PlatformHeader />
+      <main className="flex-1">
+        {children}
+      </main>
+    </div>
+  );
+}
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/ventures" component={Ventures} />
-      <Route path="/ventures/submit" component={VentureSubmit} />
-      <Route path="/ventures/compare" component={VentureCompare} />
-      <Route path="/ventures/:id" component={VentureDetail} />
-      <Route path="/messages" component={Messages} />
-      <Route path="/messages/:userId" component={Messages} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/diaspora" component={Diaspora} />
-      <Route path="/diaspora/deals" component={DiasporaDealRoom} />
-      <Route path="/documents" component={Documents} />
-      <Route path="/admin" component={AdminPanel} />
-      <Route path="/progress" component={FounderProgress} />
-      <Route path="/kyc" component={KYCVerification} />
-      <Route path="/404" component={NotFound} />
-      <Route component={NotFound} />
-    </Switch>
+    <AppLayout>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/dashboard" component={Dashboard} />
+        <Route path="/ventures" component={Ventures} />
+        <Route path="/ventures/submit" component={VentureSubmit} />
+        <Route path="/ventures/compare" component={VentureCompare} />
+        <Route path="/ventures/:id" component={VentureDetail} />
+        <Route path="/messages" component={Messages} />
+        <Route path="/messages/:userId" component={Messages} />
+        <Route path="/profile" component={Profile} />
+        <Route path="/diaspora" component={Diaspora} />
+        <Route path="/diaspora/deals" component={DiasporaDealRoom} />
+        <Route path="/documents" component={Documents} />
+        <Route path="/admin" component={AdminPanel} />
+        <Route path="/progress" component={FounderProgress} />
+        <Route path="/kyc" component={KYCVerification} />
+        <Route path="/analytics" component={Analytics} />
+        <Route path="/notifications" component={Notifications} />
+        <Route path="/404" component={NotFound} />
+        <Route component={NotFound} />
+      </Switch>
+    </AppLayout>
   );
 }
 

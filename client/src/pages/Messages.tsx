@@ -8,7 +8,7 @@ import { getLoginUrl } from "@/const";
 import { useLocation, useParams } from "wouter";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Send, MessageSquare, Shield } from "lucide-react";
+import { Send, MessageSquare, Shield, Search, Inbox } from "lucide-react";
 
 export default function Messages() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -72,14 +72,7 @@ export default function Messages() {
   }, []) ?? [];
 
   return (
-    <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-muted/30">
-      <header className="bg-white border-b border-border px-6 py-4 flex items-center gap-4">
-        <button onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className={`w-5 h-5 ${isRTL ? "rotate-180" : ""}`} />
-        </button>
-        <h1 className="font-bold text-foreground">{language === "en" ? "Messages" : "الرسائل"}</h1>
-      </header>
-
+    <div dir={isRTL ? "rtl" : "ltr"} className="min-h-[calc(100vh-3.5rem)] bg-muted/30">
       <div className="container py-6 max-w-5xl">
         <div className="grid md:grid-cols-3 gap-4 h-[600px]">
           {/* Conversations List */}

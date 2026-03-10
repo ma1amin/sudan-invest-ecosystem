@@ -41,12 +41,9 @@ export default function Profile() {
 
   return (
     <div dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-muted/30">
-      <header className="bg-white border-b border-border px-6 py-4 flex items-center gap-4">
-        <button onClick={() => navigate("/dashboard")} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className={`w-5 h-5 ${isRTL ? "rotate-180" : ""}`} />
-        </button>
+      <div className="bg-white border-b border-border px-6 py-4">
         <h1 className="font-bold text-foreground">{language === "en" ? "My Profile" : "ملفي الشخصي"}</h1>
-      </header>
+      </div>
 
       <div className="container py-8 max-w-2xl space-y-6">
         <Card className="border border-border">
