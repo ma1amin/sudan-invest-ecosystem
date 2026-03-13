@@ -1,0 +1,1 @@
+ALTER TABLE `ventures` ADD `sudanRegion` varchar(100);

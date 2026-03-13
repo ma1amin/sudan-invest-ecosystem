@@ -42,6 +42,7 @@ export default function VentureSubmit() {
     stage: "idea" as const,
     fundingTarget: "",
     country: "",
+    sudanRegion: "",
     teamSize: "",
     website: "",
   });
@@ -80,7 +81,8 @@ export default function VentureSubmit() {
         sectorId: form.sectorId ? Number(form.sectorId) : undefined,
         stage: form.stage,
         fundingTarget: form.fundingTarget || undefined,
-        country: form.country || undefined,
+        country: form.country || "Sudan",
+        sudanRegion: form.sudanRegion || undefined,
         teamSize: form.teamSize ? Number(form.teamSize) : undefined,
         website: form.website || undefined,
       });
@@ -249,6 +251,26 @@ export default function VentureSubmit() {
                       onChange={(e) => setForm({ ...form, teamSize: e.target.value })}
                     />
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>{language === "en" ? "Sudan Region / State" : "الولاية / المنطقة في السودان"}</Label>
+                  <select
+                    className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background"
+                    value={form.sudanRegion}
+                    onChange={(e) => setForm({ ...form, sudanRegion: e.target.value })}
+                  >
+                    <option value="">{language === "en" ? "Select your state/region..." : "اختر ولايتك / منطقتك..."}</option>
+                    {[
+                      "Khartoum", "Omdurman", "North Khartoum",
+                      "Gezira", "Kassala", "Red Sea", "River Nile",
+                      "Northern", "North Darfur", "South Darfur",
+                      "West Darfur", "Central Darfur", "East Darfur",
+                      "North Kordofan", "South Kordofan", "West Kordofan",
+                      "Blue Nile", "Sennar", "White Nile", "Al Qadarif"
+                    ].map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -422,7 +444,7 @@ export default function VentureSubmit() {
               <Button variant="outline" onClick={() => navigate("/dashboard")} className="flex-1">
                 {language === "en" ? "Back to Dashboard" : "العودة إلى لوحة التحكم"}
               </Button>
-              <Button onClick={() => { setStep("form"); setForm({ title: "", titleAr: "", tagline: "", description: "", sectorId: "", stage: "idea", fundingTarget: "", country: "", teamSize: "", website: "" }); }} className="flex-1">
+              <Button onClick={() => { setStep("form"); setForm({ title: "", titleAr: "", tagline: "", description: "", sectorId: "", stage: "idea", fundingTarget: "", country: "", sudanRegion: "", teamSize: "", website: "" }); }} className="flex-1">
                 {language === "en" ? "Submit Another" : "تقديم مشروع آخر"}
               </Button>
             </div>

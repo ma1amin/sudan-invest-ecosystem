@@ -15,6 +15,13 @@
       "when": 1772701320917,
       "tag": "0001_remarkable_slyde",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1773185582792,
+      "tag": "0002_brainy_vivisector",
+      "breakpoints": true
     }
   ]
 }

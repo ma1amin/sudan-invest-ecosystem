@@ -13,7 +13,7 @@ import {
   Home, Layers, Languages, GraduationCap, ChevronRight,
   Leaf, Sun, Banknote, Heart, BookOpen, Truck
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type SidebarItem = {
   id: string;
@@ -48,7 +48,15 @@ export default function Dashboard() {
   const [, navigate] = useLocation();
   const [activeSection, setActiveSection] = useState("overview");
 
-  const platformRole = (user as any)?.platformRole ?? "founder";
+  const rawPlatformRole = (user as any)?.platformRole as string | null | undefined;
+  const platformRole = rawPlatformRole ?? "founder";
+
+  // Redirect new users who have not selected a role yet
+  useEffect(() => {
+    if (!loading && isAuthenticated && user && !rawPlatformRole) {
+      navigate("/role-selection");
+    }
+  }, [loading, isAuthenticated, user, rawPlatformRole]);
 
   // Data queries
   const { data: myVentures } = trpc.ventures.myVentures.useQuery(undefined, { enabled: isAuthenticated && platformRole === "founder" });

@@ -184,3 +184,47 @@
 - 5 reusable components
 - Global language/theme switcher on every page
 - All routes correctly registered and wired
+
+## Phase 13: Platform Completion Sprint
+
+### Investor Onboarding Wizard
+- [ ] /onboarding route with 3-step wizard (role selection → preferences → profile)
+- [ ] Step 1: Role selection (Founder, Investor, Mentor, Diaspora)
+- [ ] Step 2: Role-specific preferences (sectors, ticket size, Sudan region for investors; sector focus for founders/mentors)
+- [ ] Step 3: Profile completion (bio, LinkedIn, location, avatar URL)
+- [ ] Auto-redirect new users (platformRole === "pending") to /onboarding after login
+- [ ] Register /onboarding route in App.tsx
+
+### Sudan Region Field on Ventures
+- [ ] Add sudanRegion field to ventures schema (enum: 18 Sudanese states)
+- [ ] Run pnpm db:push to migrate schema
+- [ ] Add sudanRegion to createVenture and updateVenture router procedures
+- [ ] Add Sudan Region select field to VentureSubmit form (Step 1)
+- [ ] Add region filter to Ventures discovery page
+- [ ] Display region badge on VentureDetail and venture cards
+
+### Trust Score & KYC Badge on Venture Cards
+- [ ] Add verificationStatus badge (Verified/Pending/Unverified) to Ventures listing cards
+- [ ] Add AI readiness score badge to Ventures listing cards
+- [ ] Add founder trust level indicator on VentureDetail page header
+
+### Role Selection Page
+- [ ] Standalone /role-select page for users with platformRole === "pending"
+- [ ] Redirect to /onboarding after role selection
+
+### Enhanced Profile Page
+- [ ] Full profile edit form (bio, LinkedIn, location, avatar URL, phone)
+- [ ] Role-specific profile fields (investment thesis for investors, expertise for mentors)
+- [ ] Profile completeness percentage indicator
+- [ ] Save profile changes via trpc.user.updateProfile
+
+### Ventures Discovery Improvements
+- [ ] Add region filter dropdown to Ventures page
+- [ ] Add AI score range filter (0-100 slider)
+- [ ] Add verification status filter (Verified only toggle)
+- [ ] Improve venture cards with trust badge, AI score, and region
+
+### Dashboard Improvements
+- [ ] Auto-redirect pending users to /onboarding from Dashboard
+- [ ] Show profile completeness progress bar in all dashboards
+- [ ] Add quick-action buttons (Submit Venture, Find Matches, Upload Document)

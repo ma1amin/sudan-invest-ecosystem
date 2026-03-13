@@ -125,6 +125,8 @@ export const ventures = mysqlTable("ventures", {
   currency: varchar("currency", { length: 10 }).default("USD"),
   country: varchar("country", { length: 100 }),
   teamSize: int("teamSize").default(1),
+  /** Sudan state/region where the venture operates */
+  sudanRegion: varchar("sudanRegion", { length: 100 }),
   website: varchar("website", { length: 500 }),
   pitchDeckUrl: varchar("pitchDeckUrl", { length: 1000 }),
   /** AI-generated readiness score 0-100 */

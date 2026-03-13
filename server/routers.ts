@@ -182,6 +182,7 @@ export const appRouter = router({
           stage: z.enum(["idea", "prototype", "mvp", "early_traction", "growth", "scaling"]),
           fundingTarget: z.string().optional(),
           country: z.string().max(100).optional(),
+          sudanRegion: z.string().max(100).optional(),
           teamSize: z.number().min(1).max(1000).optional(),
           website: z.string().url().optional().or(z.literal("")),
         })
@@ -266,7 +267,8 @@ Also provide:
 **Venture Title:** ${venture.title}${venture.titleAr ? ` (Arabic: ${venture.titleAr})` : ""}
 **Stage:** ${venture.stage}
 **Sector:** ${venture.sectorId ? `Sector ID ${venture.sectorId}` : "Not specified"}${Array.isArray(venture.subsectors) && venture.subsectors.length > 0 ? ` | Subsectors: ${(venture.subsectors as string[]).join(", ")}` : ""}
-**Country of Operation:** ${venture.country ?? "Not specified"}
+**Country of Operation:** ${venture.country ?? "Sudan"}
+**Sudan Region/State:** ${(venture as any).sudanRegion ?? "Not specified"}
 **Team Size:** ${venture.teamSize ?? "Not specified"}
 **Funding Target:** ${venture.fundingTarget ?? "Not specified"}
 **Tagline:** ${venture.tagline ?? "Not provided"}
@@ -354,6 +356,7 @@ Please evaluate this venture against the platform's investment thesis and scorin
         stage: z.enum(["idea", "prototype", "mvp", "early_traction", "growth", "scaling"]).optional(),
         fundingTarget: z.string().optional(),
         country: z.string().max(100).optional(),
+        sudanRegion: z.string().max(100).optional(),
         teamSize: z.number().optional(),
         website: z.string().optional(),
       }))

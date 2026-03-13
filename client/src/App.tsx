@@ -22,6 +22,8 @@ import VentureCompare from "./pages/VentureCompare";
 import DiasporaDealRoom from "./pages/DiasporaDealRoom";
 import Analytics from "./pages/Analytics";
 import Notifications from "./pages/Notifications";
+import RoleSelection from "./pages/RoleSelection";
+import Onboarding from "./pages/Onboarding";
 
 /**
  * Routes that use their own full-page layout (sidebar dashboards, etc.)
@@ -72,6 +74,8 @@ function Router() {
         <Route path="/kyc" component={KYCVerification} />
         <Route path="/analytics" component={Analytics} />
         <Route path="/notifications" component={Notifications} />
+        <Route path="/role-selection" component={RoleSelection} />
+        <Route path="/onboarding" component={Onboarding} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
