@@ -2,10 +2,12 @@ import { and, desc, eq, like, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   analyticsEvents,
+  behavioralSignals,
   connectionRequests,
   diasporaEngagements,
   documents,
   InsertUser,
+  investments,
   investorPreferences,
   matches,
   messages,
@@ -13,17 +15,21 @@ import {
   sectors,
   users,
   ventures,
+  ventureHistory,
   waitlist,
   type InsertAnalyticsEvent,
+  type InsertBehavioralSignal,
   type InsertConnectionRequest,
   type InsertDiasporaEngagement,
   type InsertDocument,
+  type InsertInvestment,
   type InsertInvestorPreference,
   type InsertMatch,
   type InsertMessage,
   type InsertNotification,
   type InsertSector,
   type InsertVenture,
+  type InsertVentureHistory,
   type InsertWaitlist,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
@@ -465,4 +471,127 @@ export async function getPlatformStats() {
     matches: Number(matchCount[0]?.count ?? 0),
     waitlist: Number(waitlistCount[0]?.count ?? 0),
   };
+}
+
+
+// ─────────────────────────────────────────────
+// BEHAVIORAL SIGNALS & ENGAGEMENT SCORING
+// ─────────────────────────────────────────────
+
+export async function trackBehavioralSignal(data: InsertBehavioralSignal): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(behavioralSignals).values(data);
+}
+
+export async function getEngagementScore(userId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+
+  // Calculate engagement score based on behavioral signals from the last 90 days
+  const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+  const signals = await db
+    .select({ scoreContribution: sql<number>`SUM(scoreContribution)` })
+    .from(behavioralSignals)
+    .where(and(eq(behavioralSignals.userId, userId), sql`createdAt >= ${ninetyDaysAgo}`));
+
+  const totalScore = Number(signals[0]?.scoreContribution ?? 0);
+  // Cap at 100 for display purposes
+  return Math.min(totalScore, 100);
+}
+
+export async function getFounderEngagementMetrics(founderId: number): Promise<{
+  engagementScore: number;
+  lastActive: Date | null;
+  totalSignals: number;
+}> {
+  const db = await getDb();
+  if (!db) return { engagementScore: 0, lastActive: null, totalSignals: 0 };
+
+  const [signals, lastSignal] = await Promise.all([
+    db.select({ count: sql<number>`count(*)` }).from(behavioralSignals).where(eq(behavioralSignals.userId, founderId)),
+    db.select({ createdAt: behavioralSignals.createdAt }).from(behavioralSignals).where(eq(behavioralSignals.userId, founderId)).orderBy(desc(behavioralSignals.createdAt)).limit(1),
+  ]);
+
+  const engagementScore = await getEngagementScore(founderId);
+  return {
+    engagementScore,
+    lastActive: lastSignal[0]?.createdAt ?? null,
+    totalSignals: Number(signals[0]?.count ?? 0),
+  };
+}
+
+// ─────────────────────────────────────────────
+// VENTURE DEAL FLOW HISTORY
+// ─────────────────────────────────────────────
+
+export async function recordVentureStatusChange(data: InsertVentureHistory): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(ventureHistory).values(data);
+}
+
+export async function getVentureHistory(ventureId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(ventureHistory).where(eq(ventureHistory.ventureId, ventureId)).orderBy(desc(ventureHistory.changedAt));
+}
+
+// ─────────────────────────────────────────────
+// INVESTOR INVESTMENTS & PORTFOLIO
+// ─────────────────────────────────────────────
+
+export async function createInvestment(data: InsertInvestment): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(investments).values(data);
+}
+
+export async function getInvestorPortfolio(investorId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(investments)
+    .where(eq(investments.investorId, investorId))
+    .orderBy(desc(investments.investmentDate));
+}
+
+export async function getPortfolioStats(investorId: number): Promise<{
+  totalInvested: number;
+  activeInvestments: number;
+  exitedInvestments: number;
+  totalVentures: number;
+  averageInvestmentSize: number;
+}> {
+  const db = await getDb();
+  if (!db) return { totalInvested: 0, activeInvestments: 0, exitedInvestments: 0, totalVentures: 0, averageInvestmentSize: 0 };
+
+  const portfolio = await db
+    .select({
+      amount: investments.amount,
+      status: investments.status,
+    })
+    .from(investments)
+    .where(eq(investments.investorId, investorId));
+
+  const totalInvested = portfolio.reduce((sum, inv) => sum + Number(inv.amount || 0), 0);
+  const activeInvestments = portfolio.filter((inv) => inv.status === "active").length;
+  const exitedInvestments = portfolio.filter((inv) => inv.status === "exited").length;
+  const totalVentures = portfolio.length;
+  const averageInvestmentSize = totalVentures > 0 ? totalInvested / totalVentures : 0;
+
+  return {
+    totalInvested,
+    activeInvestments,
+    exitedInvestments,
+    totalVentures,
+    averageInvestmentSize,
+  };
+}
+
+export async function getVentureInvestors(ventureId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(investments).where(eq(investments.ventureId, ventureId)).orderBy(desc(investments.investmentDate));
 }

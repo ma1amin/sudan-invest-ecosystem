@@ -25,6 +25,7 @@ import Notifications from "./pages/Notifications";
 import RoleSelection from "./pages/RoleSelection";
 import Onboarding from "./pages/Onboarding";
 import PublicProfile from "./pages/PublicProfile";
+import InvestorPortfolio from "./pages/InvestorPortfolio";
 
 /**
  * Routes that use their own full-page layout (sidebar dashboards, etc.)
@@ -68,6 +69,7 @@ function Router() {
         <Route path="/messages/:userId" component={Messages} />
         <Route path="/profile" component={Profile} />
         <Route path="/profile/:userId" component={PublicProfile} />
+        <Route path="/investor/portfolio" component={InvestorPortfolio} />
         <Route path="/diaspora" component={Diaspora} />
         <Route path="/diaspora/deals" component={DiasporaDealRoom} />
         <Route path="/documents" component={Documents} />

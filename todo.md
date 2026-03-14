@@ -288,3 +288,49 @@
 - [x] Full bilingual AR/EN RTL/LTR support
 - [x] All routes registered and wired
 - [x] Platform 90%+ complete — ready for final testing and deployment
+
+
+## Phase 15: Deal Flow Pipeline, Engagement Scoring & Investor Portfolio
+
+### Deal Flow Pipeline
+- [x] Add behavioralSignals table to schema for tracking user engagement events
+- [x] Add investments table for recording investor investments with amount, type, valuation, equity percentage, status
+- [x] Add ventureHistory table for tracking venture status changes through moderation pipeline
+- [x] Database migration with pnpm db:push (3 new tables)
+- [x] Add backend database helpers for behavioral signals, engagement scoring, investments, and venture history
+- [x] Add tRPC procedures: ventures.getHistory, ventures.getInvestors
+- [x] Add tRPC procedures: engagement.trackSignal, engagement.getFounderMetrics
+- [x] Add tRPC procedures: portfolio.recordInvestment, portfolio.getPortfolio, portfolio.getStats
+
+### Engagement Scoring UI
+- [x] Create VentureStatusBadge component with status icons and bilingual labels
+- [x] Create EngagementScoreBadge component showing founder engagement score (0-100) with activity levels
+- [x] Create DealFlowTimeline component for displaying venture status change history
+- [x] Add engagement metrics display to PublicProfile page (founders only)
+- [x] Integrate engagement score query into PublicProfile
+
+### Investor Portfolio Dashboard
+- [x] Create InvestorPortfolio page (/investor/portfolio) with portfolio statistics
+- [x] Display total invested, active investments, exited investments, average investment size
+- [x] Add pie chart for investment type distribution (equity, debt, grant, convertible, revenue share)
+- [x] Add bar chart for investment status distribution (pending, active, exited, written off)
+- [x] Add investments table with venture ID, type, amount, status, date
+- [x] Role-based access control (investors only)
+- [x] Add /investor/portfolio route to App.tsx
+- [x] Bilingual AR/EN support with RTL/LTR layout
+
+### Testing & Verification
+- [x] TypeScript check: 0 errors
+- [x] Vitest: 75 tests passing (0 failures)
+- [x] All new components integrated and type-safe
+- [x] All routes registered in App.tsx
+
+## Phase 15 Summary
+- [x] 3 new database tables (behavioralSignals, investments, ventureHistory)
+- [x] 6 new tRPC procedures for deal flow, engagement, and portfolio management
+- [x] 3 new UI components (VentureStatusBadge, EngagementScoreBadge, DealFlowTimeline)
+- [x] 1 new page (InvestorPortfolio dashboard with charts and statistics)
+- [x] 75 vitest tests passing, 0 TypeScript errors
+- [x] 18 pages total, 8 reusable components
+- [x] Full bilingual AR/EN RTL/LTR support
+- [x] Platform 95%+ complete with deal flow pipeline and investor portfolio tracking

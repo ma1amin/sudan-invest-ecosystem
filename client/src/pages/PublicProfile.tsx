@@ -7,6 +7,7 @@ import { useLocation, useParams } from "wouter";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { ArrowLeft, CheckCircle, AlertCircle, Globe, MessageSquare, MapPin, Users, TrendingUp, Shield, Award } from "lucide-react";
+import { EngagementScoreBadge } from "@/components/EngagementScoreBadge";
 
 export default function PublicProfile() {
   const { language, isRTL } = useLanguage();
@@ -28,6 +29,11 @@ export default function PublicProfile() {
   );
 
   const { data: sectors } = trpc.sectors.list.useQuery();
+
+  const { data: engagementMetrics } = trpc.engagement.getFounderMetrics.useQuery(
+    { founderId: userId },
+    { enabled: !!userId && user?.platformRole === "founder" }
+  );
 
   const requestConnection = trpc.connections.request.useMutation({
     onSuccess: () => toast.success(language === "en" ? "Connection request sent!" : "تم إرسال طلب التواصل!"),
@@ -135,6 +141,9 @@ export default function PublicProfile() {
                     <Award className="w-3 h-3" />
                     {language === "en" ? "Mentor" : "مرشد"}
                   </Badge>
+                )}
+                {user.platformRole === "founder" && engagementMetrics && (
+                  <EngagementScoreBadge score={engagementMetrics.engagementScore} />
                 )}
               </div>
 

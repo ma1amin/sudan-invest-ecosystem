@@ -349,3 +349,91 @@ export const investorPreferences = mysqlTable("investorPreferences", {
 
 export type InvestorPreference = typeof investorPreferences.$inferSelect;
 export type InsertInvestorPreference = typeof investorPreferences.$inferInsert;
+
+// ─────────────────────────────────────────────
+// BEHAVIORAL SIGNALS & ENGAGEMENT SCORING
+// ─────────────────────────────────────────────
+
+export const behavioralSignals = mysqlTable("behavioralSignals", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  /** Event type: login, profile_update, venture_submit, message_sent, document_upload, etc. */
+  eventType: varchar("eventType", { length: 100 }).notNull(),
+  /** Reference to the entity (venture ID, message ID, etc.) */
+  referenceId: int("referenceId"),
+  /** Score contribution for this signal (0-10) */
+  scoreContribution: int("scoreContribution").default(1),
+  metadata: json("metadata"), // Additional context
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type BehavioralSignal = typeof behavioralSignals.$inferSelect;
+export type InsertBehavioralSignal = typeof behavioralSignals.$inferInsert;
+
+// ─────────────────────────────────────────────
+// INVESTOR INVESTMENTS & PORTFOLIO
+// ─────────────────────────────────────────────
+
+export const investments = mysqlTable("investments", {
+  id: int("id").autoincrement().primaryKey(),
+  investorId: int("investorId").notNull(),
+  ventureId: int("ventureId").notNull(),
+  /** Investment amount in the specified currency */
+  amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 10 }).default("USD").notNull(),
+  /** Investment type: equity, debt, grant, convertible, etc. */
+  investmentType: mysqlEnum("investmentType", [
+    "equity",
+    "debt",
+    "grant",
+    "convertible",
+    "revenue_share",
+    "other",
+  ])
+    .default("equity")
+    .notNull(),
+  /** Valuation at time of investment */
+  valuation: decimal("valuation", { precision: 15, scale: 2 }),
+  /** Equity percentage (if applicable) */
+  equityPercentage: decimal("equityPercentage", { precision: 5, scale: 2 }),
+  /** Investment status: pending, active, exited, written_off */
+  status: mysqlEnum("status", [
+    "pending",
+    "active",
+    "exited",
+    "written_off",
+  ])
+    .default("pending")
+    .notNull(),
+  /** Notes about the investment */
+  notes: text("notes"),
+  investmentDate: timestamp("investmentDate"),
+  exitDate: timestamp("exitDate"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Investment = typeof investments.$inferSelect;
+export type InsertInvestment = typeof investments.$inferInsert;
+
+// ─────────────────────────────────────────────
+// VENTURE DEAL FLOW HISTORY
+// ─────────────────────────────────────────────
+
+export const ventureHistory = mysqlTable("ventureHistory", {
+  id: int("id").autoincrement().primaryKey(),
+  ventureId: int("ventureId").notNull(),
+  /** Previous moderation status */
+  previousStatus: varchar("previousStatus", { length: 50 }),
+  /** New moderation status */
+  newStatus: varchar("newStatus", { length: 50 }).notNull(),
+  /** Admin who made the change */
+  changedBy: int("changedBy"),
+  /** Reason for status change */
+  reason: text("reason"),
+  /** Timestamp of the status change */
+  changedAt: timestamp("changedAt").defaultNow().notNull(),
+});
+
+export type VentureHistory = typeof ventureHistory.$inferSelect;
+export type InsertVentureHistory = typeof ventureHistory.$inferInsert;

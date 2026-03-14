@@ -44,6 +44,14 @@ import {
   updateMatchStatus,
   updateUserProfile,
   updateVenture,
+  getFounderEngagementMetrics,
+  getInvestorPortfolio,
+  getPortfolioStats,
+  getVentureHistory,
+  getVentureInvestors,
+  recordVentureStatusChange,
+  trackBehavioralSignal,
+  createInvestment,
   upsertInvestorPreferences,
   getConnectionRequests,
   getDiasporaEngagementsByUser,
@@ -410,6 +418,91 @@ Please evaluate this venture against the platform's investment thesis and scorin
 
         return { success: true };
       }),
+
+    getHistory: protectedProcedure
+      .input(z.object({ ventureId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const venture = await getVentureById(input.ventureId);
+        if (!venture) throw new TRPCError({ code: "NOT_FOUND" });
+        // Allow founder or admin to view history
+        if (venture.founderId !== ctx.user.id && ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+        return getVentureHistory(input.ventureId);
+      }),
+
+    getInvestors: publicProcedure
+      .input(z.object({ ventureId: z.number() }))
+      .query(async ({ input }) => {
+        return getVentureInvestors(input.ventureId);
+      }),
+  }),
+
+  // ── ENGAGEMENT SCORING ───────────────────
+  engagement: router({
+    trackSignal: protectedProcedure
+      .input(z.object({
+        eventType: z.string(),
+        referenceId: z.number().optional(),
+        scoreContribution: z.number().default(1),
+        metadata: z.record(z.string(), z.unknown()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await trackBehavioralSignal({
+          userId: ctx.user.id,
+          eventType: input.eventType,
+          referenceId: input.referenceId,
+          scoreContribution: input.scoreContribution,
+          metadata: input.metadata,
+        });
+        return { success: true };
+      }),
+
+    getFounderMetrics: publicProcedure
+      .input(z.object({ founderId: z.number() }))
+      .query(async ({ input }) => {
+        return getFounderEngagementMetrics(input.founderId);
+      }),
+  }),
+
+  // ── INVESTOR PORTFOLIO ────────────────────
+  portfolio: router({
+    recordInvestment: protectedProcedure
+      .input(z.object({
+        ventureId: z.number(),
+        amount: z.string(),
+        currency: z.string().default("USD"),
+        investmentType: z.enum(["equity", "debt", "grant", "convertible", "revenue_share", "other"]).default("equity"),
+        valuation: z.string().optional(),
+        equityPercentage: z.string().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.platformRole !== "investor") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Only investors can record investments" });
+        }
+        await createInvestment({
+          investorId: ctx.user.id,
+          ventureId: input.ventureId,
+          amount: input.amount as any,
+          currency: input.currency,
+          investmentType: input.investmentType,
+          valuation: input.valuation as any,
+          equityPercentage: input.equityPercentage as any,
+          notes: input.notes,
+          status: "pending",
+          investmentDate: new Date(),
+        });
+        return { success: true };
+      }),
+
+    getPortfolio: protectedProcedure.query(async ({ ctx }) => {
+      return getInvestorPortfolio(ctx.user.id);
+    }),
+
+    getStats: protectedProcedure.query(async ({ ctx }) => {
+      return getPortfolioStats(ctx.user.id);
+    }),
   }),
 
   // ── MATCHING ─────────────────────────────
