@@ -5,9 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
-import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { CheckCircle, TrendingUp, MapPin, DollarSign, Target, ChevronRight, ChevronLeft } from "lucide-react";
 
@@ -89,6 +89,7 @@ export default function Onboarding() {
 
   const handleFinish = async () => {
     setSaving(true);
+    const [, navigate] = useLocation();
     await savePrefs.mutateAsync({
       preferredSectors: selectedSectors.map(Number).filter(n => !isNaN(n)),
       preferredStages: selectedStages as any,
@@ -97,6 +98,10 @@ export default function Onboarding() {
       preferredGeographies: selectedRegions,
       investmentThesis: selectedEngagement.join(", "),
     });
+    // Redirect to ventures with pre-filters
+    const sectorsParam = selectedSectors.join(",");
+    const regionsParam = selectedRegions.join(",");
+    navigate(`/ventures?sectors=${sectorsParam}&regions=${regionsParam}`);
   };
 
   const steps: Step[] = ["sectors", "stages", "ticket", "regions", "engagement"];

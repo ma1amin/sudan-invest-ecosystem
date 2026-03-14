@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Building2, TrendingUp, MapPin, Users, Zap, ShieldCheck, Star, ArrowRight } from "lucide-react";
 
 const STAGE_COLORS: Record<string, string> = {
@@ -39,13 +39,26 @@ function getScoreLabel(score: number, language: string) {
 
 export default function Ventures() {
   const { language, isRTL } = useLanguage();
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const [search, setSearch] = useState("");
   const [selectedSector, setSelectedSector] = useState("all");
   const [selectedStage, setSelectedStage] = useState("all");
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [sortBy, setSortBy] = useState<"score" | "newest" | "funding">("score");
 
+  const [isPersonalized, setIsPersonalized] = useState(false);
+
+  // Parse query params on mount and apply pre-filters
+  useEffect(() => {
+    const params = new URLSearchParams(location.split("?")[1] || "");
+    const sectors = params.get("sectors");
+    const regions = params.get("regions");
+    if (sectors || regions) {
+      setIsPersonalized(true);
+      if (sectors) setSelectedSector(sectors.split(",")[0]);
+      if (regions) setSelectedRegion(regions.split(",")[0]);
+    }
+  }, [location]);
   const { data: ventures, isLoading } = trpc.ventures.published.useQuery({ limit: 100, offset: 0 });
   const { data: sectors } = trpc.sectors.list.useQuery();
 
