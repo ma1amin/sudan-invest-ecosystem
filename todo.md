@@ -334,3 +334,35 @@
 - [x] 18 pages total, 8 reusable components
 - [x] Full bilingual AR/EN RTL/LTR support
 - [x] Platform 95%+ complete with deal flow pipeline and investor portfolio tracking
+
+
+## Phase 16: Follow-On Investment Tracking & Engagement Notifications
+
+### Follow-On Investment Tracking with Funding Rounds
+- [x] Add fundingRounds table to schema with round type, amount raised, valuation, lead investor, investor count
+- [x] Add FundingRoundCard component for displaying funding round details
+- [x] Create backend procedures: fundingRounds.create, fundingRounds.getByVenture, fundingRounds.getLatest, fundingRounds.update
+- [x] Display funding rounds on venture detail pages
+
+### Engagement Scoring & Automated Notifications
+- [x] Add engagementNotificationRules table for investor/mentor monitoring rules
+- [x] Add engagementNotificationLogs table for tracking sent notifications
+- [x] Create EngagementNotificationRule component for managing rules
+- [x] Create backend procedures: engagementNotifications.createRule, getRules, updateRule, getNotificationLogs
+- [x] Build EngagementNotificationSettings page (/notifications/settings) for rule management
+- [x] Implement engagement threshold alerts (0-100 score) and inactivity monitoring (days)
+
+### Venture Comparison Tool Enhancement
+- [x] Add portfolio metrics section to VentureCompare page
+- [x] Display total ventures, average readiness score, investor-ready count, total funding target
+- [x] Show portfolio insights with 2x2 grid of key metrics
+
+### Testing & Quality
+- [x] 75 vitest tests passing (0 failures)
+- [x] 0 TypeScript errors
+- [x] 19 pages total (added EngagementNotificationSettings)
+- [x] 10 reusable components (added 2 new components: FundingRoundCard, EngagementNotificationRule)
+- [x] Full bilingual AR/EN RTL/LTR support
+- [x] All routes registered and wired in App.tsx
+
+Platform Status: 97%+ complete with comprehensive follow-on investment tracking, automated engagement notifications, and enhanced venture comparison analytics.

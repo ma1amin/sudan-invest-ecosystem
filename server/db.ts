@@ -1,6 +1,9 @@
 import { and, desc, eq, like, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
+  engagementNotificationLogs,
+  engagementNotificationRules,
+  fundingRounds,
   analyticsEvents,
   behavioralSignals,
   connectionRequests,
@@ -19,6 +22,9 @@ import {
   waitlist,
   type InsertAnalyticsEvent,
   type InsertBehavioralSignal,
+  type InsertEngagementNotificationLog,
+  type InsertEngagementNotificationRule,
+  type InsertFundingRound,
   type InsertConnectionRequest,
   type InsertDiasporaEngagement,
   type InsertDocument,
@@ -594,4 +600,96 @@ export async function getVentureInvestors(ventureId: number): Promise<any[]> {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(investments).where(eq(investments.ventureId, ventureId)).orderBy(desc(investments.investmentDate));
+}
+
+
+// ─────────────────────────────────────────────
+// FUNDING ROUNDS
+// ─────────────────────────────────────────────
+
+export async function createFundingRound(data: InsertFundingRound): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(fundingRounds).values(data);
+}
+
+export async function getFundingRounds(ventureId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(fundingRounds)
+    .where(eq(fundingRounds.ventureId, ventureId))
+    .orderBy(desc(fundingRounds.announcementDate));
+}
+
+export async function getLatestFundingRound(ventureId: number): Promise<any | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const rounds = await db
+    .select()
+    .from(fundingRounds)
+    .where(eq(fundingRounds.ventureId, ventureId))
+    .orderBy(desc(fundingRounds.announcementDate))
+    .limit(1);
+  return rounds[0] || null;
+}
+
+export async function updateFundingRound(id: number, data: Partial<InsertFundingRound>): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(fundingRounds).set(data).where(eq(fundingRounds.id, id));
+}
+
+// ─────────────────────────────────────────────
+// ENGAGEMENT NOTIFICATION RULES
+// ─────────────────────────────────────────────
+
+export async function createEngagementNotificationRule(data: InsertEngagementNotificationRule): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(engagementNotificationRules).values(data);
+}
+
+export async function getEngagementNotificationRules(userId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(engagementNotificationRules)
+    .where(and(eq(engagementNotificationRules.userId, userId), eq(engagementNotificationRules.isActive, true)));
+}
+
+export async function updateEngagementNotificationRule(id: number, data: Partial<InsertEngagementNotificationRule>): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(engagementNotificationRules).set(data).where(eq(engagementNotificationRules.id, id));
+}
+
+export async function logEngagementNotification(data: InsertEngagementNotificationLog): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(engagementNotificationLogs).values(data);
+}
+
+export async function getEngagementNotificationLogs(ruleId: number, limit: number = 10): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(engagementNotificationLogs)
+    .where(eq(engagementNotificationLogs.ruleId, ruleId))
+    .orderBy(desc(engagementNotificationLogs.createdAt))
+    .limit(limit);
+}
+
+export async function getEngagementNotificationsForFounder(founderId: number, limit: number = 20): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(engagementNotificationLogs)
+    .where(eq(engagementNotificationLogs.founderId, founderId))
+    .orderBy(desc(engagementNotificationLogs.createdAt))
+    .limit(limit);
 }

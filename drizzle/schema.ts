@@ -437,3 +437,92 @@ export const ventureHistory = mysqlTable("ventureHistory", {
 
 export type VentureHistory = typeof ventureHistory.$inferSelect;
 export type InsertVentureHistory = typeof ventureHistory.$inferInsert;
+
+
+// ─────────────────────────────────────────────
+// FUNDING ROUNDS
+// ─────────────────────────────────────────────
+
+export const fundingRounds = mysqlTable("fundingRounds", {
+  id: int("id").autoincrement().primaryKey(),
+  ventureId: int("ventureId").notNull(),
+  /** Round type: Seed, Series A, Series B, Series C, etc. */
+  roundType: varchar("roundType", { length: 50 }).notNull(),
+  /** Total amount raised in this round */
+  amountRaised: decimal("amountRaised", { precision: 15, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 10 }).default("USD").notNull(),
+  /** Post-money valuation after this round */
+  postMoneyValuation: decimal("postMoneyValuation", { precision: 15, scale: 2 }),
+  /** Lead investor name */
+  leadInvestor: varchar("leadInvestor", { length: 255 }),
+  /** Number of investors in this round */
+  investorCount: int("investorCount"),
+  /** Round status: planned, active, closed, cancelled */
+  status: mysqlEnum("status", [
+    "planned",
+    "active",
+    "closed",
+    "cancelled",
+  ])
+    .default("planned")
+    .notNull(),
+  /** Announcement date */
+  announcementDate: timestamp("announcementDate"),
+  /** Round completion date */
+  closureDate: timestamp("closureDate"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FundingRound = typeof fundingRounds.$inferSelect;
+export type InsertFundingRound = typeof fundingRounds.$inferInsert;
+
+// ─────────────────────────────────────────────
+// ENGAGEMENT NOTIFICATION RULES
+// ─────────────────────────────────────────────
+
+export const engagementNotificationRules = mysqlTable("engagementNotificationRules", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Investor or mentor ID who receives the notification */
+  userId: int("userId").notNull(),
+  /** Venture ID to monitor */
+  ventureId: int("ventureId").notNull(),
+  /** Engagement score threshold (0-100) */
+  engagementThreshold: int("engagementThreshold").default(30).notNull(),
+  /** Days of inactivity before triggering notification */
+  inactivityDays: int("inactivityDays").default(14).notNull(),
+  /** Is the rule active */
+  isActive: boolean("isActive").default(true).notNull(),
+  /** Last notification sent at */
+  lastNotificationAt: timestamp("lastNotificationAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EngagementNotificationRule = typeof engagementNotificationRules.$inferSelect;
+export type InsertEngagementNotificationRule = typeof engagementNotificationRules.$inferInsert;
+
+// ─────────────────────────────────────────────
+// ENGAGEMENT NOTIFICATION LOGS
+// ─────────────────────────────────────────────
+
+export const engagementNotificationLogs = mysqlTable("engagementNotificationLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Rule ID that triggered this notification */
+  ruleId: int("ruleId").notNull(),
+  /** Founder ID being monitored */
+  founderId: int("founderId").notNull(),
+  /** Engagement score at time of notification */
+  engagementScoreAtTime: int("engagementScoreAtTime"),
+  /** Days since last activity */
+  daysSinceLastActivity: int("daysSinceLastActivity"),
+  /** Notification message sent */
+  message: text("message"),
+  /** Was the notification sent successfully */
+  sentSuccessfully: boolean("sentSuccessfully").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EngagementNotificationLog = typeof engagementNotificationLogs.$inferSelect;
+export type InsertEngagementNotificationLog = typeof engagementNotificationLogs.$inferInsert;

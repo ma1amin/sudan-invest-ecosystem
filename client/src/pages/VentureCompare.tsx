@@ -99,7 +99,7 @@ const STAGE_ORDER = ["idea", "prototype", "mvp", "early_traction", "growth", "sc
 // ─────────────────────────────────────────────
 
 export default function VentureCompare() {
-  const { isRTL } = useLanguage();
+  const { isRTL, language } = useLanguage();
   const [, navigate] = useLocation();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
@@ -167,6 +167,41 @@ export default function VentureCompare() {
           )}
           {!isLoading && (!ventures || ventures.length === 0) && (
             <p className="text-muted-foreground text-center py-8">{t.noVentures}</p>
+          )}
+          {!isLoading && ventures && ventures.length > 0 && (
+            <Card className="border border-border p-6 bg-gradient-to-br from-primary/5 to-transparent mb-6">
+              <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                {language === "en" ? "Portfolio Comparison Insights" : "رؤى مقارنة المحفظة"}
+              </h3>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-muted-foreground">{language === "en" ? "Total Ventures" : "إجمالي المشاريع"}</p>
+                  <p className="text-2xl font-bold text-foreground">{ventures.length}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">{language === "en" ? "Avg. Readiness" : "متوسط الجاهزية"}</p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {Math.round(ventures.reduce((sum, v) => sum + (v.aiReadinessScore || 0), 0) / ventures.length)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">{language === "en" ? "Investor Ready" : "جاهز للمستثمرين"}</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {ventures.filter((v) => {
+                      const analysis = v.aiAnalysis as AIAnalysis | undefined;
+                      return analysis?.investorReadinessFlag === "ready_for_investors";
+                    }).length}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">{language === "en" ? "Total Funding Target" : "إجمالي الهدف التمويلي"}</p>
+                  <p className="text-lg font-bold text-foreground">
+                    ${(ventures.reduce((sum, v) => sum + (parseFloat(v.fundingTarget || "0") || 0), 0) / 1000000).toFixed(1)}M
+                  </p>
+                </div>
+              </div>
+            </Card>
           )}
           {!isLoading && ventures && ventures.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

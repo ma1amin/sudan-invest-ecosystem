@@ -52,6 +52,15 @@ import {
   recordVentureStatusChange,
   trackBehavioralSignal,
   createInvestment,
+  createEngagementNotificationRule,
+  createFundingRound,
+  getEngagementNotificationRules,
+  getEngagementNotificationsForFounder,
+  getFundingRounds,
+  getLatestFundingRound,
+  logEngagementNotification,
+  updateEngagementNotificationRule,
+  updateFundingRound,
   upsertInvestorPreferences,
   getConnectionRequests,
   getDiasporaEngagementsByUser,
@@ -503,6 +512,123 @@ Please evaluate this venture against the platform's investment thesis and scorin
     getStats: protectedProcedure.query(async ({ ctx }) => {
       return getPortfolioStats(ctx.user.id);
     }),
+  }),
+
+  // ── FUNDING ROUNDS ────────────────────────
+  fundingRounds: router({
+    create: protectedProcedure
+      .input(z.object({
+        ventureId: z.number(),
+        roundType: z.string(),
+        amountRaised: z.string(),
+        currency: z.string().default("USD"),
+        postMoneyValuation: z.string().optional(),
+        leadInvestor: z.string().optional(),
+        investorCount: z.number().optional(),
+        announcementDate: z.date().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const venture = await getVentureById(input.ventureId);
+        if (!venture) throw new TRPCError({ code: "NOT_FOUND" });
+        if (venture.founderId !== ctx.user.id && ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+        await createFundingRound({
+          ventureId: input.ventureId,
+          roundType: input.roundType,
+          amountRaised: input.amountRaised as any,
+          currency: input.currency,
+          postMoneyValuation: input.postMoneyValuation as any,
+          leadInvestor: input.leadInvestor,
+          investorCount: input.investorCount,
+          status: "planned",
+          announcementDate: input.announcementDate,
+          notes: input.notes,
+        });
+        return { success: true };
+      }),
+
+    getByVenture: publicProcedure
+      .input(z.object({ ventureId: z.number() }))
+      .query(async ({ input }) => {
+        return getFundingRounds(input.ventureId);
+      }),
+
+    getLatest: publicProcedure
+      .input(z.object({ ventureId: z.number() }))
+      .query(async ({ input }) => {
+        return getLatestFundingRound(input.ventureId);
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["planned", "active", "closed", "cancelled"]).optional(),
+        closureDate: z.date().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        await updateFundingRound(input.id, {
+          status: input.status,
+          closureDate: input.closureDate,
+          notes: input.notes,
+        });
+        return { success: true };
+      }),
+  }),
+
+  // ── ENGAGEMENT NOTIFICATIONS ──────────────
+  engagementNotifications: router({
+    createRule: protectedProcedure
+      .input(z.object({
+        ventureId: z.number(),
+        engagementThreshold: z.number().default(30),
+        inactivityDays: z.number().default(14),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.platformRole !== "investor" && ctx.user.platformRole !== "mentor") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Only investors and mentors can create notification rules" });
+        }
+        await createEngagementNotificationRule({
+          userId: ctx.user.id,
+          ventureId: input.ventureId,
+          engagementThreshold: input.engagementThreshold,
+          inactivityDays: input.inactivityDays,
+        });
+        return { success: true };
+      }),
+
+    getRules: protectedProcedure.query(async ({ ctx }) => {
+      return getEngagementNotificationRules(ctx.user.id);
+    }),
+
+    updateRule: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        engagementThreshold: z.number().optional(),
+        inactivityDays: z.number().optional(),
+        isActive: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await updateEngagementNotificationRule(input.id, {
+          engagementThreshold: input.engagementThreshold,
+          inactivityDays: input.inactivityDays,
+          isActive: input.isActive,
+        });
+        return { success: true };
+      }),
+
+    getNotificationLogs: protectedProcedure
+      .input(z.object({ founderId: z.number(), limit: z.number().default(20) }))
+      .query(async ({ ctx, input }) => {
+        // Only allow viewing own notifications or if admin
+        if (ctx.user.id !== input.founderId && ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN" });
+        }
+        return getEngagementNotificationsForFounder(input.founderId, input.limit);
+      }),
   }),
 
   // ── MATCHING ─────────────────────────────
