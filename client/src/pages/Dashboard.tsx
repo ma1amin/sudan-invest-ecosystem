@@ -63,15 +63,15 @@ export default function Dashboard() {
   const { data: publishedVentures } = trpc.ventures.published.useQuery({ limit: 6, offset: 0 }, { enabled: isAuthenticated && (platformRole === "investor" || platformRole === "mentor") });
   const { data: matches } = trpc.matching.forInvestor.useQuery(undefined, { enabled: isAuthenticated && (platformRole === "investor" || platformRole === "mentor" || platformRole === "diaspora") });
   const { data: conversations } = trpc.messages.conversations.useQuery(undefined, { enabled: isAuthenticated });
-  const { data: notifications } = trpc.notifications.list.useQuery(undefined, { enabled: isAuthenticated });
+  const { data: notifications } = trpc.notifications.getNotifications.useQuery(undefined, { enabled: isAuthenticated });
   const { data: platformStats } = trpc.analytics.platformStats.useQuery(undefined, { enabled: isAuthenticated });
   const { data: sectors } = trpc.sectors.list.useQuery();
   const { data: myEngagements } = trpc.diaspora.myEngagements.useQuery(undefined, { enabled: isAuthenticated && platformRole === "diaspora" });
   const { data: moderationQueue } = trpc.ventures.moderationQueue.useQuery(undefined, { enabled: isAuthenticated && user?.role === "admin" });
 
-  const markNotificationRead = trpc.notifications.markRead.useMutation();
+  const markNotificationRead = trpc.notifications.markAsRead.useMutation();
 
-  const unreadNotifications = notifications?.filter((n: any) => !n.isRead).length ?? 0;
+  const unreadNotifications = notifications?.filter((n: any) => n.status !== "read").length ?? 0;
   const unreadMessages = conversations?.filter((c: any) => !c.isRead).length ?? 0;
 
   if (loading) {

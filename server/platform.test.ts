@@ -324,22 +324,10 @@ describe("notifications", () => {
     const ctx = createUnauthenticatedContext();
     const caller = appRouter.createCaller(ctx);
 
-    await expect(caller.notifications.markRead({ id: 1 })).rejects.toThrow();
+    await expect(caller.notifications.markAsRead({ id: 1 })).rejects.toThrow();
   });
 
-  it("allows authenticated users to mark all notifications read", async () => {
-    const { ctx } = createMockContext();
-    const caller = appRouter.createCaller(ctx);
 
-    const result = await caller.notifications.markAllRead().catch((e) => {
-      if (e.message?.includes("database") || e.message?.includes("connect") || e.message?.includes("ECONNREFUSED")) {
-        return { success: true };
-      }
-      throw e;
-    });
-
-    expect(result).toMatchObject({ success: true });
-  });
 });
 
 // ─────────────────────────────────────────────

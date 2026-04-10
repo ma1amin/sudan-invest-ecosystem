@@ -667,3 +667,170 @@ export const benchmarkComparisons = mysqlTable("benchmarkComparisons", {
 
 export type BenchmarkComparison = typeof benchmarkComparisons.$inferSelect;
 export type InsertBenchmarkComparison = typeof benchmarkComparisons.$inferInsert;
+
+
+// ─────────────────────────────────────────────
+// LP INVESTOR PORTAL
+// ─────────────────────────────────────────────
+
+export const lpInvestors = mysqlTable("lpInvestors", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Fund ID this LP is invested in */
+  fundId: int("fundId").notNull(),
+  /** LP user ID */
+  userId: int("userId").notNull(),
+  /** Commitment amount */
+  commitmentAmount: decimal("commitmentAmount", { precision: 15, scale: 2 }).notNull(),
+  /** Capital called to date */
+  capitalCalled: decimal("capitalCalled", { precision: 15, scale: 2 }).default("0"),
+  /** Distributions received */
+  distributionsReceived: decimal("distributionsReceived", { precision: 15, scale: 2 }).default("0"),
+  /** Current NAV (Net Asset Value) */
+  currentNAV: decimal("currentNAV", { precision: 15, scale: 2 }).default("0"),
+  /** IRR to date */
+  irrToDate: decimal("irrToDate", { precision: 5, scale: 2 }).default("0"),
+  /** MOIC (Multiple on Invested Capital) */
+  moic: decimal("moic", { precision: 5, scale: 2 }).default("0"),
+  /** LP status: active, exited, pending */
+  status: mysqlEnum("status", ["active", "exited", "pending"]).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type LPInvestor = typeof lpInvestors.$inferSelect;
+export type InsertLPInvestor = typeof lpInvestors.$inferInsert;
+
+export const lpFunds = mysqlTable("lpFunds", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Fund name */
+  fundName: varchar("fundName", { length: 255 }).notNull(),
+  /** Fund manager/investor ID */
+  managerId: int("managerId").notNull(),
+  /** Fund vintage year */
+  vintageYear: int("vintageYear").notNull(),
+  /** Target fund size */
+  targetSize: decimal("targetSize", { precision: 15, scale: 2 }).notNull(),
+  /** Current fund size raised */
+  currentSize: decimal("currentSize", { precision: 15, scale: 2 }).default("0"),
+  /** Fund status: raising, active, closed */
+  status: mysqlEnum("status", ["raising", "active", "closed"]).default("raising").notNull(),
+  /** Fund metrics as JSON: total investments, exits, avg return, etc. */
+  metrics: json("metrics"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type LPFund = typeof lpFunds.$inferSelect;
+export type InsertLPFund = typeof lpFunds.$inferInsert;
+
+export const lpReports = mysqlTable("lpReports", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Fund ID */
+  fundId: int("fundId").notNull(),
+  /** Report type: quarterly, annual, custom */
+  reportType: mysqlEnum("reportType", ["quarterly", "annual", "custom"]).notNull(),
+  /** Report period: Q1 2024, 2024, etc. */
+  reportPeriod: varchar("reportPeriod", { length: 100 }).notNull(),
+  /** Report content as JSON: performance metrics, portfolio updates, etc. */
+  content: json("content").notNull(),
+  /** PDF URL if generated */
+  pdfUrl: text("pdfUrl"),
+  /** Report status: draft, generated, sent */
+  status: mysqlEnum("status", ["draft", "generated", "sent"]).default("draft").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type LPReport = typeof lpReports.$inferSelect;
+export type InsertLPReport = typeof lpReports.$inferInsert;
+
+// ─────────────────────────────────────────────
+// MOBILE PUSH NOTIFICATIONS
+// ─────────────────────────────────────────────
+
+export const pushNotifications = mysqlTable("pushNotifications", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID receiving notification */
+  userId: int("userId").notNull(),
+  /** Notification type: venture_update, investor_message, deal_alert, etc. */
+  notificationType: varchar("notificationType", { length: 100 }).notNull(),
+  /** Title of notification */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Body of notification */
+  body: text("body").notNull(),
+  /** Related entity ID (venture, investment, message, etc.) */
+  relatedEntityId: int("relatedEntityId"),
+  /** Related entity type (venture, investment, message, etc.) */
+  relatedEntityType: varchar("relatedEntityType", { length: 100 }),
+  /** Notification status: pending, sent, failed, read */
+  status: mysqlEnum("status", ["pending", "sent", "failed", "read"]).default("pending").notNull(),
+  /** Sent timestamp */
+  sentAt: timestamp("sentAt"),
+  /** Read timestamp */
+  readAt: timestamp("readAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type PushNotification = typeof pushNotifications.$inferSelect;
+export type InsertPushNotification = typeof pushNotifications.$inferInsert;
+
+export const notificationPreferences = mysqlTable("notificationPreferences", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID */
+  userId: int("userId").notNull().unique(),
+  /** Enable venture updates */
+  ventureUpdates: boolean("ventureUpdates").default(true).notNull(),
+  /** Enable investor messages */
+  investorMessages: boolean("investorMessages").default(true).notNull(),
+  /** Enable deal alerts */
+  dealAlerts: boolean("dealAlerts").default(true).notNull(),
+  /** Enable portfolio updates */
+  portfolioUpdates: boolean("portfolioUpdates").default(true).notNull(),
+  /** Notification digest: immediate, daily, weekly */
+  digestFrequency: mysqlEnum("digestFrequency", ["immediate", "daily", "weekly"]).default("immediate").notNull(),
+  /** Quiet hours: start time (HH:MM) */
+  quietHoursStart: varchar("quietHoursStart", { length: 5 }),
+  /** Quiet hours: end time (HH:MM) */
+  quietHoursEnd: varchar("quietHoursEnd", { length: 5 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type NotificationPreference = typeof notificationPreferences.$inferSelect;
+export type InsertNotificationPreference = typeof notificationPreferences.$inferInsert;
+
+// ─────────────────────────────────────────────
+// ADVANCED SEARCH & FILTERS
+// ─────────────────────────────────────────────
+
+export const savedSearches = mysqlTable("savedSearches", {
+  id: int("id").autoincrement().primaryKey(),
+  /** User ID who saved the search */
+  userId: int("userId").notNull(),
+  /** Search name */
+  searchName: varchar("searchName", { length: 255 }).notNull(),
+  /** Search filters as JSON: sectors, stages, regions, team size, funding range, etc. */
+  filters: json("filters").notNull(),
+  /** Number of results */
+  resultCount: int("resultCount").default(0),
+  /** Last run timestamp */
+  lastRunAt: timestamp("lastRunAt"),
+  /** Enable alerts for new matches */
+  alertsEnabled: boolean("alertsEnabled").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type SavedSearch = typeof savedSearches.$inferSelect;
+export type InsertSavedSearch = typeof savedSearches.$inferInsert;
+
+export const searchAlerts = mysqlTable("searchAlerts", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Saved search ID */
+  savedSearchId: int("savedSearchId").notNull(),
+  /** Venture ID that matches */
+  ventureId: int("ventureId").notNull(),
+  /** Alert status: pending, sent, dismissed */
+  status: mysqlEnum("status", ["pending", "sent", "dismissed"]).default("pending").notNull(),
+  /** Sent timestamp */
+  sentAt: timestamp("sentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type SearchAlert = typeof searchAlerts.$inferSelect;
+export type InsertSearchAlert = typeof searchAlerts.$inferInsert;

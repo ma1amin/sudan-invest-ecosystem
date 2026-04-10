@@ -34,14 +34,8 @@ export default function Notifications() {
   const [filter, setFilter] = useState<NotifType>("all");
   const isEn = language === "en";
 
-  const { data: notifications, refetch } = trpc.notifications.list.useQuery(undefined, { enabled: isAuthenticated });
-  const markRead = trpc.notifications.markRead.useMutation({ onSuccess: () => refetch() });
-  const markAllRead = trpc.notifications.markAllRead.useMutation({
-    onSuccess: () => {
-      refetch();
-      toast.success(isEn ? "All notifications marked as read" : "تم تحديد جميع الإشعارات كمقروءة");
-    },
-  });
+  const { data: notifications, refetch } = trpc.notifications.getNotifications.useQuery(undefined, { enabled: isAuthenticated });
+  const markAsRead = trpc.notifications.markAsRead.useMutation({ onSuccess: () => refetch() });
 
   if (loading) {
     return (
@@ -98,18 +92,6 @@ export default function Notifications() {
               )}
             </div>
           </div>
-          {unreadCount > 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => markAllRead.mutate()}
-              disabled={markAllRead.isPending}
-              className="flex items-center gap-2"
-            >
-              <CheckCheck className="w-4 h-4" />
-              {isEn ? "Mark all read" : "تحديد الكل كمقروء"}
-            </Button>
-          )}
         </div>
 
         {/* Filter Tabs */}
@@ -146,7 +128,7 @@ export default function Notifications() {
             {filtered.map((notif: any) => (
               <div
                 key={notif.id}
-                onClick={() => !notif.isRead && markRead.mutate({ id: notif.id })}
+                onClick={() => notif.status !== "read" && markAsRead.mutate({ id: notif.id })}
                 className={`flex items-start gap-4 p-4 rounded-xl border cursor-pointer transition-all hover:shadow-sm ${
                   notif.isRead
                     ? "bg-card border-border opacity-70"

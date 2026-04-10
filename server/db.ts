@@ -4,6 +4,13 @@ import {
   engagementNotificationLogs,
   engagementNotificationRules,
   fundingRounds,
+  lpInvestors,
+  lpFunds,
+  lpReports,
+  pushNotifications,
+  notificationPreferences,
+  savedSearches,
+  searchAlerts,
   benchmarkComparisons,
   dealRoomDiscussions,
   dealRoomDocuments,
@@ -888,4 +895,175 @@ export async function getInvestorBenchmarkComparisons(investorId: number): Promi
     .from(benchmarkComparisons)
     .where(eq(benchmarkComparisons.investorId, investorId))
     .orderBy(desc(benchmarkComparisons.createdAt));
+}
+
+
+// ─────────────────────────────────────────────
+// LP INVESTOR PORTAL
+// ─────────────────────────────────────────────
+
+export async function getLPFundsByManager(managerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(lpFunds).where(eq(lpFunds.managerId, managerId));
+}
+
+export async function getLPInvestorsByFund(fundId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select({
+      id: lpInvestors.id,
+      userId: lpInvestors.userId,
+      commitmentAmount: lpInvestors.commitmentAmount,
+      capitalCalled: lpInvestors.capitalCalled,
+      distributionsReceived: lpInvestors.distributionsReceived,
+      currentNAV: lpInvestors.currentNAV,
+      irrToDate: lpInvestors.irrToDate,
+      moic: lpInvestors.moic,
+      status: lpInvestors.status,
+      userName: users.name,
+      userEmail: users.email,
+    })
+    .from(lpInvestors)
+    .innerJoin(users, eq(lpInvestors.userId, users.id))
+    .where(eq(lpInvestors.fundId, fundId));
+}
+
+export async function getLPInvestorPortfolio(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select({
+      fundId: lpInvestors.fundId,
+      fundName: lpFunds.fundName,
+      vintageYear: lpFunds.vintageYear,
+      commitmentAmount: lpInvestors.commitmentAmount,
+      capitalCalled: lpInvestors.capitalCalled,
+      distributionsReceived: lpInvestors.distributionsReceived,
+      currentNAV: lpInvestors.currentNAV,
+      irrToDate: lpInvestors.irrToDate,
+      moic: lpInvestors.moic,
+      status: lpInvestors.status,
+    })
+    .from(lpInvestors)
+    .innerJoin(lpFunds, eq(lpInvestors.fundId, lpFunds.id))
+    .where(eq(lpInvestors.userId, userId));
+}
+
+export async function createLPReport(fundId: number, reportType: "quarterly" | "annual" | "custom", reportPeriod: string, content: Record<string, unknown>) {
+  const db = await getDb();
+  if (!db) return null;
+  return db.insert(lpReports).values({ fundId, reportType, reportPeriod, content });
+}
+
+export async function getLPReportsByFund(fundId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(lpReports).where(eq(lpReports.fundId, fundId));
+}
+
+// ─────────────────────────────────────────────
+// MOBILE PUSH NOTIFICATIONS
+// ─────────────────────────────────────────────
+
+export async function createPushNotification(
+  userId: number,
+  notificationType: string,
+  title: string,
+  body: string,
+  relatedEntityId?: number,
+  relatedEntityType?: string
+) {
+  const db = await getDb();
+  if (!db) return null;
+  return db.insert(pushNotifications).values({
+    userId,
+    notificationType,
+    title,
+    body,
+    relatedEntityId,
+    relatedEntityType,
+  });
+}
+
+export async function getPushNotificationsByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(pushNotifications)
+    .where(eq(pushNotifications.userId, userId))
+    .orderBy(desc(pushNotifications.createdAt));
+}
+
+export async function markPushNotificationAsRead(notificationId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  return db
+    .update(pushNotifications)
+    .set({ status: "read", readAt: new Date() })
+    .where(eq(pushNotifications.id, notificationId));
+}
+
+export async function getNotificationPreferences(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(notificationPreferences).where(eq(notificationPreferences.userId, userId));
+  return result[0] || null;
+}
+
+export async function updateNotificationPreferences(userId: number, preferences: Record<string, unknown>) {
+  const db = await getDb();
+  if (!db) return null;
+  return db
+    .update(notificationPreferences)
+    .set(preferences)
+    .where(eq(notificationPreferences.userId, userId));
+}
+
+// ─────────────────────────────────────────────
+// ADVANCED SEARCH & FILTERS
+// ─────────────────────────────────────────────
+
+export async function createSavedSearch(userId: number, searchName: string, filters: Record<string, unknown>) {
+  const db = await getDb();
+  if (!db) return null;
+  return db.insert(savedSearches).values({ userId, searchName, filters });
+}
+
+export async function getSavedSearchesByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(savedSearches).where(eq(savedSearches.userId, userId));
+}
+
+export async function updateSavedSearch(searchId: number, filters: Record<string, unknown>, resultCount: number) {
+  const db = await getDb();
+  if (!db) return null;
+  return db
+    .update(savedSearches)
+    .set({ filters, resultCount, lastRunAt: new Date() })
+    .where(eq(savedSearches.id, searchId));
+}
+
+export async function createSearchAlert(savedSearchId: number, ventureId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  return db.insert(searchAlerts).values({ savedSearchId, ventureId });
+}
+
+export async function getSearchAlertsBySearch(savedSearchId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(searchAlerts).where(eq(searchAlerts.savedSearchId, savedSearchId));
+}
+
+export async function markSearchAlertAsSent(alertId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  return db
+    .update(searchAlerts)
+    .set({ status: "sent", sentAt: new Date() })
+    .where(eq(searchAlerts.id, alertId));
 }

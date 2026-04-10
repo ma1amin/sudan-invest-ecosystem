@@ -61,6 +61,22 @@ import {
   logEngagementNotification,
   updateEngagementNotificationRule,
   updateFundingRound,
+  getLPFundsByManager,
+  getLPInvestorsByFund,
+  getLPInvestorPortfolio,
+  createLPReport,
+  getLPReportsByFund,
+  createPushNotification,
+  getPushNotificationsByUser,
+  markPushNotificationAsRead,
+  getNotificationPreferences,
+  updateNotificationPreferences,
+  createSavedSearch,
+  getSavedSearchesByUser,
+  updateSavedSearch,
+  createSearchAlert,
+  getSearchAlertsBySearch,
+  markSearchAlertAsSent,
   createBenchmarkComparison,
   createDealRoom,
   createDealRoomDiscussion,
@@ -1030,22 +1046,6 @@ Please evaluate this venture against the platform's investment thesis and scorin
     }),
   }),
 
-  // ── NOTIFICATIONS ─────────────────────────
-  notifications: router({
-    list: protectedProcedure.query(async ({ ctx }) => {
-      return getUserNotifications(ctx.user.id);
-    }),
-    markRead: protectedProcedure
-      .input(z.object({ id: z.number() }))
-      .mutation(async ({ ctx, input }) => {
-        await markNotificationRead(input.id);
-        return { success: true };
-      }),
-    markAllRead: protectedProcedure.mutation(async ({ ctx }) => {
-      await markAllNotificationsRead(ctx.user.id);
-      return { success: true };
-    }),
-  }),
 
   // ── DOCUMENTS ────────────────────────────
   documents: router({
@@ -1135,6 +1135,84 @@ Please evaluate this venture against the platform's investment thesis and scorin
     get: protectedProcedure.query(async ({ ctx }) => {
       return getInvestorPreferences(ctx.user.id);
     }),
+  }),
+
+  // ── LP INVESTOR PORTAL ─────────────────────
+  lpPortal: router({
+    getFunds: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.platformRole !== "investor") throw new TRPCError({ code: "FORBIDDEN" });
+      return getLPFundsByManager(ctx.user.id);
+    }),
+
+    getPortfolio: protectedProcedure.query(async ({ ctx }) => {
+      return getLPInvestorPortfolio(ctx.user.id);
+    }),
+
+    getReports: protectedProcedure
+      .input(z.object({ fundId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.platformRole !== "investor") throw new TRPCError({ code: "FORBIDDEN" });
+        return getLPReportsByFund(input.fundId);
+      }),
+  }),
+
+  // ── PUSH NOTIFICATIONS ──────────────────────
+  notifications: router({
+    getNotifications: protectedProcedure.query(async ({ ctx }) => {
+      return getPushNotificationsByUser(ctx.user.id);
+    }),
+
+    markAsRead: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await markPushNotificationAsRead(input.id);
+        return { success: true };
+      }),
+
+    getPreferences: protectedProcedure.query(async ({ ctx }) => {
+      return getNotificationPreferences(ctx.user.id);
+    }),
+
+    updatePreferences: protectedProcedure
+      .input(z.object({
+        ventureUpdates: z.boolean().optional(),
+        investorMessages: z.boolean().optional(),
+        dealAlerts: z.boolean().optional(),
+        portfolioUpdates: z.boolean().optional(),
+        digestFrequency: z.enum(["immediate", "daily", "weekly"]).optional(),
+        quietHoursStart: z.string().optional(),
+        quietHoursEnd: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await updateNotificationPreferences(ctx.user.id, input);
+        return { success: true };
+      }),
+  }),
+
+  // ── ADVANCED SEARCH & FILTERS ──────────────
+  search: router({
+    createSavedSearch: protectedProcedure
+      .input(z.object({
+        searchName: z.string(),
+        filters: z.record(z.string(), z.unknown()),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return createSavedSearch(ctx.user.id, input.searchName, input.filters);
+      }),
+
+    getSavedSearches: protectedProcedure.query(async ({ ctx }) => {
+      return getSavedSearchesByUser(ctx.user.id);
+    }),
+
+    updateSavedSearch: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        filters: z.record(z.string(), z.unknown()),
+        resultCount: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return updateSavedSearch(input.id, input.filters, input.resultCount);
+      }),
   }),
 
   // ── ANALYTICS ────────────────────────────

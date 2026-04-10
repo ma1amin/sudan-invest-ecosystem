@@ -61,14 +61,13 @@ export function NotificationsPanel() {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const { data: notifications, refetch } = trpc.notifications.list.useQuery(undefined, {
+  const { data: notifications, refetch } = trpc.notifications.getNotifications.useQuery(undefined, {
     refetchInterval: 30000, // Poll every 30s
   });
 
-  const markRead = trpc.notifications.markRead.useMutation({ onSuccess: () => refetch() });
-  const markAllRead = trpc.notifications.markAllRead.useMutation({ onSuccess: () => refetch() });
+  const markAsRead = trpc.notifications.markAsRead.useMutation({ onSuccess: () => refetch() });
 
-  const unreadCount = (notifications ?? []).filter((n) => !n.isRead).length;
+  const unreadCount = (notifications ?? []).filter((n: any) => n.status !== "read").length;
 
   // Close panel on outside click
   useEffect(() => {
@@ -109,15 +108,7 @@ export function NotificationsPanel() {
               )}
             </h3>
             <div className="flex items-center gap-1">
-              {unreadCount > 0 && (
-                <button
-                  onClick={() => markAllRead.mutate()}
-                  className="text-xs text-primary hover:underline flex items-center gap-1"
-                >
-                  <CheckCheck className="w-3 h-3" />
-                  {isRTL ? "قراءة الكل" : "Mark all read"}
-                </button>
-              )}
+
               <button onClick={() => setOpen(false)} className="p-1 hover:bg-muted rounded">
                 <X className="w-3 h-3 text-muted-foreground" />
               </button>
@@ -132,19 +123,19 @@ export function NotificationsPanel() {
                 {isRTL ? "لا توجد إشعارات" : "No notifications yet"}
               </div>
             )}
-            {(notifications ?? []).map((n) => (
+             {notifications?.map((n: any) => (
               <button
                 key={n.id}
-                onClick={() => !n.isRead && markRead.mutate({ id: n.id })}
-                className={`w-full text-left px-4 py-3 border-b last:border-0 hover:bg-muted/50 transition-colors ${!n.isRead ? "bg-primary/5" : ""}`}
+                onClick={() => n.status !== "read" && markAsRead.mutate({ id: n.id })}
+                className={`w-full text-left px-4 py-3 border-b last:border-0 hover:bg-muted/50 transition-colors ${n.status !== "read" ? "bg-primary/5" : ""}`}
               >
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5 shrink-0">
-                    <NotificationIcon type={n.type} />
+                    <NotificationIcon type={n.notificationType} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm ${!n.isRead ? "font-semibold" : "font-normal"} truncate`}>
-                      {isRTL && n.titleAr ? n.titleAr : n.title}
+                    <p className={`text-sm ${n.status !== "read" ? "font-semibold" : "font-normal"} truncate`}>
+                      {n.title}
                     </p>
                     {n.body && (
                       <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{n.body}</p>
@@ -153,7 +144,7 @@ export function NotificationsPanel() {
                       {timeAgo(n.createdAt, isRTL)}
                     </p>
                   </div>
-                  {!n.isRead && (
+                  {n.status !== "read" && (
                     <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
                   )}
                 </div>
