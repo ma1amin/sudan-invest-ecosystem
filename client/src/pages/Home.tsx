@@ -130,7 +130,7 @@ export default function Home() {
                 {language === "en" ? "Now Accepting Early Members" : "نقبل الأعضاء المبكرين الآن"}
               </Badge>
 
-              <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-6">
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight animate-slide-in-down">
                 {language === "en" ? (
                   <>
                     Sudan's Trusted<br />
@@ -146,13 +146,13 @@ export default function Home() {
                 )}
               </h1>
 
-              <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-lg">
+              <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-lg animate-slide-in-up" style={{animationDelay: '0.1s'}}>
                 {language === "en"
                   ? "Connecting Sudanese founders with global investors, mentors, and diaspora supporters through AI-powered matching, verified profiles, and transparent evaluation."
                   : "ربط المؤسسين السودانيين بالمستثمرين العالميين والمرشدين والمغتربين من خلال المطابقة الذكية والملفات الموثقة والتقييم الشفاف."}
               </p>
 
-              <div className="flex flex-wrap gap-4 mb-8">
+              <div className="flex flex-wrap gap-4 mb-8 animate-slide-in-up" style={{animationDelay: '0.2s'}}>
                 <a href="#waitlist">
                   <Button size="lg" className="h-12 px-8 text-base font-semibold">
                     {language === "en" ? "Join the Waitlist" : "انضم إلى قائمة الانتظار"}
@@ -169,7 +169,7 @@ export default function Home() {
               </div>
 
               {/* Trust indicators */}
-              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-6 text-sm text-muted-foreground animate-slide-in-up" style={{animationDelay: '0.3s'}}>
                 <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" />{language === "en" ? "Verified profiles" : "ملفات موثقة"}</span>
                 <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" />{language === "en" ? "AI-powered" : "مدعوم بالذكاء الاصطناعي"}</span>
                 <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" />{language === "en" ? "Bilingual" : "ثنائي اللغة"}</span>
@@ -177,9 +177,9 @@ export default function Home() {
             </div>
 
             {/* Right: Stats Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 animate-slide-in-right" style={{animationDelay: '0.2s'}}>
               {STATS.map((stat, i) => (
-                <Card key={i} className="border border-border hover:shadow-md transition-shadow">
+                <Card key={i} className="border border-border card-hover stagger-item">
                   <CardContent className="p-6 text-center">
                     <div className="text-3xl font-bold text-primary mb-1">{stat.value}</div>
                     <div className="text-sm text-muted-foreground">{language === "en" ? stat.labelEn : stat.labelAr}</div>
@@ -230,7 +230,7 @@ export default function Home() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {FEATURES.map((feature, i) => (
-              <Card key={i} className="border border-border hover:shadow-md transition-shadow">
+              <Card key={i} className="border border-border card-hover stagger-item" style={{animationDelay: `${i * 0.1}s`}}>
                 <CardContent className="p-6">
                   <div className={`w-11 h-11 rounded-xl ${feature.color} flex items-center justify-center mb-4`}>
                     <feature.icon className="w-5 h-5" />
@@ -254,7 +254,7 @@ export default function Home() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {ROLES.map((role, i) => (
-              <Card key={i} className={`border-2 ${role.color} hover:shadow-md transition-shadow`}>
+              <Card key={i} className={`border-2 ${role.color} card-hover stagger-item`} style={{animationDelay: `${i * 0.1}s`}}>
                 <CardContent className="p-6">
                   <div className="w-12 h-12 rounded-xl bg-white/70 flex items-center justify-center mb-4">
                     <role.icon className="w-6 h-6" />
