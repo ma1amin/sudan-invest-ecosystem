@@ -30,6 +30,9 @@ import EngagementNotificationSettings from "./pages/EngagementNotificationSettin
 import InvestorReports from "./pages/InvestorReports";
 import DealRoom from "./pages/DealRoom";
 import PerformanceBenchmarking from "./pages/PerformanceBenchmarking";
+import LPPortfolio from "./pages/LPPortfolio";
+import NotificationCenter from "./pages/NotificationCenter";
+import AdvancedSearch from "./pages/AdvancedSearch";
 
 /**
  * Routes that use their own full-page layout (sidebar dashboards, etc.)
@@ -74,6 +77,9 @@ function Router() {
         <Route path="/profile" component={Profile} />
         <Route path="/profile/:userId" component={PublicProfile} />
         <Route path="/investor/portfolio" component={InvestorPortfolio} />
+        <Route path="/lp/portfolio" component={LPPortfolio} />
+        <Route path="/notifications" component={NotificationCenter} />
+        <Route path="/search" component={AdvancedSearch} />
         <Route path="/notifications/settings" component={EngagementNotificationSettings} />
         <Route path="/reports" component={InvestorReports} />
         <Route path="/deal-room/:id" component={DealRoom} />
