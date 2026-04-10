@@ -61,6 +61,24 @@ import {
   logEngagementNotification,
   updateEngagementNotificationRule,
   updateFundingRound,
+  createBenchmarkComparison,
+  createDealRoom,
+  createDealRoomDiscussion,
+  createInvestorReport,
+  createPerformanceBenchmark,
+  getBenchmarkById,
+  getBenchmarkComparison,
+  getDealRoomById,
+  getDealRoomDiscussions,
+  getDealRoomDocuments,
+  getDealRoomsByFundingRound,
+  getInvestorBenchmarkComparisons,
+  getInvestorReportById,
+  getInvestorReports,
+  getPerformanceBenchmarks,
+  updateDiscussionReplyCount,
+  updateInvestorReportStatus,
+  uploadDealRoomDocument,
   upsertInvestorPreferences,
   getConnectionRequests,
   getDiasporaEngagementsByUser,
@@ -629,6 +647,164 @@ Please evaluate this venture against the platform's investment thesis and scorin
         }
         return getEngagementNotificationsForFounder(input.founderId, input.limit);
       }),
+  }),
+
+  // ── INVESTOR REPORTING & ANALYTICS ──────────
+  reporting: router({
+    createReport: protectedProcedure
+      .input(z.object({
+        reportType: z.string(),
+        reportingPeriod: z.string(),
+        reportData: z.record(z.string(), z.any()),
+        totalPortfolioValue: z.string().optional(),
+        unrealizedValue: z.string().optional(),
+        realizedValue: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.platformRole !== "investor") throw new TRPCError({ code: "FORBIDDEN" });
+        await createInvestorReport({
+          investorId: ctx.user.id,
+          reportType: input.reportType,
+          reportingPeriod: input.reportingPeriod,
+          reportData: input.reportData,
+          totalPortfolioValue: input.totalPortfolioValue as any,
+          unrealizedValue: input.unrealizedValue as any,
+          realizedValue: input.realizedValue as any,
+          status: "draft",
+        });
+        return { success: true };
+      }),
+
+    getReports: protectedProcedure.query(async ({ ctx }) => {
+      return getInvestorReports(ctx.user.id);
+    }),
+
+    getReport: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const report = await getInvestorReportById(input.id);
+        if (!report || report.investorId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN" });
+        return report;
+      }),
+
+    updateReportStatus: protectedProcedure
+      .input(z.object({ id: z.number(), status: z.string(), pdfUrl: z.string().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        const report = await getInvestorReportById(input.id);
+        if (!report || report.investorId !== ctx.user.id) throw new TRPCError({ code: "FORBIDDEN" });
+        await updateInvestorReportStatus(input.id, input.status, input.pdfUrl);
+        return { success: true };
+      }),
+  }),
+
+  // ── DEAL ROOM & COLLABORATION ───────────────
+  dealRoom: router({
+    createRoom: protectedProcedure
+      .input(z.object({
+        fundingRoundId: z.number(),
+        ventureId: z.number(),
+        title: z.string(),
+        description: z.string().optional(),
+        accessLevel: z.string().default("investors"),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.platformRole !== "investor") throw new TRPCError({ code: "FORBIDDEN" });
+        await createDealRoom({
+          fundingRoundId: input.fundingRoundId,
+          ventureId: input.ventureId,
+          title: input.title,
+          description: input.description,
+          accessLevel: input.accessLevel,
+        });
+        return { success: true };
+      }),
+
+    getRoomsByFundingRound: publicProcedure
+      .input(z.object({ fundingRoundId: z.number() }))
+      .query(async ({ input }) => {
+        return getDealRoomsByFundingRound(input.fundingRoundId);
+      }),
+
+    getRoom: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return getDealRoomById(input.id);
+      }),
+
+    uploadDocument: protectedProcedure
+      .input(z.object({
+        dealRoomId: z.number(),
+        name: z.string(),
+        documentType: z.string(),
+        fileUrl: z.string(),
+        fileSize: z.number().optional(),
+        mimeType: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await uploadDealRoomDocument({
+          dealRoomId: input.dealRoomId,
+          uploadedById: ctx.user.id,
+          name: input.name,
+          documentType: input.documentType,
+          fileUrl: input.fileUrl,
+          fileSize: input.fileSize,
+          mimeType: input.mimeType,
+        });
+        return { success: true };
+      }),
+
+    getDocuments: publicProcedure
+      .input(z.object({ dealRoomId: z.number() }))
+      .query(async ({ input }) => {
+        return getDealRoomDocuments(input.dealRoomId);
+      }),
+
+    createDiscussion: protectedProcedure
+      .input(z.object({
+        dealRoomId: z.number(),
+        title: z.string(),
+        content: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await createDealRoomDiscussion({
+          dealRoomId: input.dealRoomId,
+          userId: ctx.user.id,
+          title: input.title,
+          content: input.content,
+        });
+        return { success: true };
+      }),
+
+    getDiscussions: publicProcedure
+      .input(z.object({ dealRoomId: z.number(), limit: z.number().default(20), offset: z.number().default(0) }))
+      .query(async ({ input }) => {
+        return getDealRoomDiscussions(input.dealRoomId, input.limit, input.offset);
+      }),
+  }),
+
+  // ── PERFORMANCE BENCHMARKING ────────────────
+  benchmarking: router({
+    getBenchmarks: publicProcedure
+      .input(z.object({ sector: z.string().default("all") }))
+      .query(async ({ input }) => {
+        return getPerformanceBenchmarks(input.sector);
+      }),
+
+    getBenchmark: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return getBenchmarkById(input.id);
+      }),
+
+    getComparison: protectedProcedure
+      .input(z.object({ benchmarkId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        return getBenchmarkComparison(ctx.user.id, input.benchmarkId);
+      }),
+
+    getComparisons: protectedProcedure.query(async ({ ctx }) => {
+      return getInvestorBenchmarkComparisons(ctx.user.id);
+    }),
   }),
 
   // ── MATCHING ─────────────────────────────

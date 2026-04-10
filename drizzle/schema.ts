@@ -526,3 +526,144 @@ export const engagementNotificationLogs = mysqlTable("engagementNotificationLogs
 
 export type EngagementNotificationLog = typeof engagementNotificationLogs.$inferSelect;
 export type InsertEngagementNotificationLog = typeof engagementNotificationLogs.$inferInsert;
+
+
+// ─────────────────────────────────────────────
+// INVESTOR REPORTING & ANALYTICS
+// ─────────────────────────────────────────────
+
+export const investorReports = mysqlTable("investorReports", {
+  id: int("id").autoincrement().primaryKey(),
+  investorId: int("investorId").notNull(),
+  /** Report type: quarterly, annual, custom */
+  reportType: varchar("reportType", { length: 50 }).notNull(),
+  /** Reporting period: Q1 2024, 2024, custom date range */
+  reportingPeriod: varchar("reportingPeriod", { length: 100 }).notNull(),
+  /** Report data as JSON: portfolio metrics, exits, performance, etc. */
+  reportData: json("reportData").notNull(),
+  /** Total portfolio value */
+  totalPortfolioValue: decimal("totalPortfolioValue", { precision: 15, scale: 2 }),
+  /** Total unrealized value */
+  unrealizedValue: decimal("unrealizedValue", { precision: 15, scale: 2 }),
+  /** Total realized value */
+  realizedValue: decimal("realizedValue", { precision: 15, scale: 2 }),
+  /** Report status: draft, generated, sent */
+  status: varchar("status", { length: 50 }).default("draft").notNull(),
+  /** PDF file URL (if generated) */
+  pdfUrl: text("pdfUrl"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type InvestorReport = typeof investorReports.$inferSelect;
+export type InsertInvestorReport = typeof investorReports.$inferInsert;
+
+// ─────────────────────────────────────────────
+// DEAL ROOM & COLLABORATION
+// ─────────────────────────────────────────────
+
+export const dealRooms = mysqlTable("dealRooms", {
+  id: int("id").autoincrement().primaryKey(),
+  fundingRoundId: int("fundingRoundId").notNull(),
+  ventureId: int("ventureId").notNull(),
+  /** Room name/title */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Room description */
+  description: text("description"),
+  /** Room status: active, archived, closed */
+  status: varchar("status", { length: 50 }).default("active").notNull(),
+  /** Access control: investors, advisors, all */
+  accessLevel: varchar("accessLevel", { length: 50 }).default("investors").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DealRoom = typeof dealRooms.$inferSelect;
+export type InsertDealRoom = typeof dealRooms.$inferInsert;
+
+// ─────────────────────────────────────────────
+// DEAL ROOM DOCUMENTS & DISCUSSIONS
+// ─────────────────────────────────────────────
+
+export const dealRoomDocuments = mysqlTable("dealRoomDocuments", {
+  id: int("id").autoincrement().primaryKey(),
+  dealRoomId: int("dealRoomId").notNull(),
+  uploadedById: int("uploadedById").notNull(),
+  /** Document name */
+  name: varchar("name", { length: 255 }).notNull(),
+  /** Document type: term_sheet, cap_table, financial, legal, other */
+  documentType: varchar("documentType", { length: 50 }).notNull(),
+  /** S3 file URL */
+  fileUrl: text("fileUrl").notNull(),
+  /** File size in bytes */
+  fileSize: int("fileSize"),
+  /** MIME type */
+  mimeType: varchar("mimeType", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DealRoomDocument = typeof dealRoomDocuments.$inferSelect;
+export type InsertDealRoomDocument = typeof dealRoomDocuments.$inferInsert;
+
+export const dealRoomDiscussions = mysqlTable("dealRoomDiscussions", {
+  id: int("id").autoincrement().primaryKey(),
+  dealRoomId: int("dealRoomId").notNull(),
+  userId: int("userId").notNull(),
+  /** Discussion thread title */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Discussion content */
+  content: text("content").notNull(),
+  /** Number of replies */
+  replyCount: int("replyCount").default(0).notNull(),
+  /** Last activity timestamp */
+  lastActivityAt: timestamp("lastActivityAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DealRoomDiscussion = typeof dealRoomDiscussions.$inferSelect;
+export type InsertDealRoomDiscussion = typeof dealRoomDiscussions.$inferInsert;
+
+// ─────────────────────────────────────────────
+// PERFORMANCE BENCHMARKING
+// ─────────────────────────────────────────────
+
+export const performanceBenchmarks = mysqlTable("performanceBenchmarks", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Benchmark name: Sudan VC Index, Africa VC Index, Global VC Index */
+  benchmarkName: varchar("benchmarkName", { length: 255 }).notNull(),
+  /** Sector focus: all, tech, agritech, fintech, etc. */
+  sector: varchar("sector", { length: 100 }).default("all").notNull(),
+  /** Reporting period: Q1 2024, 2024, etc. */
+  reportingPeriod: varchar("reportingPeriod", { length: 100 }).notNull(),
+  /** Benchmark metrics as JSON: avg MOIC, avg IRR, median return, etc. */
+  metrics: json("metrics").notNull(),
+  /** Number of funds in benchmark */
+  fundCount: int("fundCount"),
+  /** Total AUM in benchmark */
+  totalAUM: decimal("totalAUM", { precision: 15, scale: 2 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PerformanceBenchmark = typeof performanceBenchmarks.$inferSelect;
+export type InsertPerformanceBenchmark = typeof performanceBenchmarks.$inferInsert;
+
+export const benchmarkComparisons = mysqlTable("benchmarkComparisons", {
+  id: int("id").autoincrement().primaryKey(),
+  investorId: int("investorId").notNull(),
+  benchmarkId: int("benchmarkId").notNull(),
+  /** Investor's MOIC vs benchmark */
+  moicPercentile: decimal("moicPercentile", { precision: 5, scale: 2 }),
+  /** Investor's IRR vs benchmark */
+  irrPercentile: decimal("irrPercentile", { precision: 5, scale: 2 }),
+  /** Investor's return vs benchmark */
+  returnPercentile: decimal("returnPercentile", { precision: 5, scale: 2 }),
+  /** Performance attribution: outperformance/underperformance reason */
+  attribution: text("attribution"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BenchmarkComparison = typeof benchmarkComparisons.$inferSelect;
+export type InsertBenchmarkComparison = typeof benchmarkComparisons.$inferInsert;

@@ -27,6 +27,9 @@ import Onboarding from "./pages/Onboarding";
 import PublicProfile from "./pages/PublicProfile";
 import InvestorPortfolio from "./pages/InvestorPortfolio";
 import EngagementNotificationSettings from "./pages/EngagementNotificationSettings";
+import InvestorReports from "./pages/InvestorReports";
+import DealRoom from "./pages/DealRoom";
+import PerformanceBenchmarking from "./pages/PerformanceBenchmarking";
 
 /**
  * Routes that use their own full-page layout (sidebar dashboards, etc.)
@@ -72,6 +75,9 @@ function Router() {
         <Route path="/profile/:userId" component={PublicProfile} />
         <Route path="/investor/portfolio" component={InvestorPortfolio} />
         <Route path="/notifications/settings" component={EngagementNotificationSettings} />
+        <Route path="/reports" component={InvestorReports} />
+        <Route path="/deal-room/:id" component={DealRoom} />
+        <Route path="/benchmarking" component={PerformanceBenchmarking} />
         <Route path="/diaspora" component={Diaspora} />
         <Route path="/diaspora/deals" component={DiasporaDealRoom} />
         <Route path="/documents" component={Documents} />

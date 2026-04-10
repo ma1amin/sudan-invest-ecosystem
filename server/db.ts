@@ -4,6 +4,12 @@ import {
   engagementNotificationLogs,
   engagementNotificationRules,
   fundingRounds,
+  benchmarkComparisons,
+  dealRoomDiscussions,
+  dealRoomDocuments,
+  dealRooms,
+  investorReports,
+  performanceBenchmarks,
   analyticsEvents,
   behavioralSignals,
   connectionRequests,
@@ -24,6 +30,12 @@ import {
   type InsertBehavioralSignal,
   type InsertEngagementNotificationLog,
   type InsertEngagementNotificationRule,
+  type InsertBenchmarkComparison,
+  type InsertDealRoom,
+  type InsertDealRoomDiscussion,
+  type InsertDealRoomDocument,
+  type InsertInvestorReport,
+  type InsertPerformanceBenchmark,
   type InsertFundingRound,
   type InsertConnectionRequest,
   type InsertDiasporaEngagement,
@@ -692,4 +704,188 @@ export async function getEngagementNotificationsForFounder(founderId: number, li
     .where(eq(engagementNotificationLogs.founderId, founderId))
     .orderBy(desc(engagementNotificationLogs.createdAt))
     .limit(limit);
+}
+
+
+// ─────────────────────────────────────────────
+// INVESTOR REPORTING & ANALYTICS
+// ─────────────────────────────────────────────
+
+export async function createInvestorReport(data: InsertInvestorReport): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(investorReports).values(data);
+}
+
+export async function getInvestorReports(investorId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(investorReports)
+    .where(eq(investorReports.investorId, investorId))
+    .orderBy(desc(investorReports.createdAt));
+}
+
+export async function getInvestorReportById(id: number): Promise<any> {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db
+    .select()
+    .from(investorReports)
+    .where(eq(investorReports.id, id))
+    .limit(1);
+  return result[0] || null;
+}
+
+export async function updateInvestorReportStatus(id: number, status: string, pdfUrl?: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db
+    .update(investorReports)
+    .set({ status, pdfUrl, updatedAt: new Date() })
+    .where(eq(investorReports.id, id));
+}
+
+// ─────────────────────────────────────────────
+// DEAL ROOM & COLLABORATION
+// ─────────────────────────────────────────────
+
+export async function createDealRoom(data: InsertDealRoom): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(dealRooms).values(data);
+}
+
+export async function getDealRoomsByFundingRound(fundingRoundId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(dealRooms)
+    .where(eq(dealRooms.fundingRoundId, fundingRoundId))
+    .orderBy(desc(dealRooms.createdAt));
+}
+
+export async function getDealRoomById(id: number): Promise<any> {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db
+    .select()
+    .from(dealRooms)
+    .where(eq(dealRooms.id, id))
+    .limit(1);
+  return result[0] || null;
+}
+
+export async function uploadDealRoomDocument(data: InsertDealRoomDocument): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(dealRoomDocuments).values(data);
+}
+
+export async function getDealRoomDocuments(dealRoomId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(dealRoomDocuments)
+    .where(eq(dealRoomDocuments.dealRoomId, dealRoomId))
+    .orderBy(desc(dealRoomDocuments.createdAt));
+}
+
+export async function createDealRoomDiscussion(data: InsertDealRoomDiscussion): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(dealRoomDiscussions).values(data);
+}
+
+export async function getDealRoomDiscussions(dealRoomId: number, limit = 20, offset = 0): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(dealRoomDiscussions)
+    .where(eq(dealRoomDiscussions.dealRoomId, dealRoomId))
+    .orderBy(desc(dealRoomDiscussions.lastActivityAt))
+    .limit(limit)
+    .offset(offset);
+}
+
+export async function updateDiscussionReplyCount(id: number, increment: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  const discussion = await db
+    .select()
+    .from(dealRoomDiscussions)
+    .where(eq(dealRoomDiscussions.id, id))
+    .limit(1);
+  
+  if (discussion[0]) {
+    await db
+      .update(dealRoomDiscussions)
+      .set({
+        replyCount: (discussion[0].replyCount || 0) + increment,
+        lastActivityAt: new Date(),
+      })
+      .where(eq(dealRoomDiscussions.id, id));
+  }
+}
+
+// ─────────────────────────────────────────────
+// PERFORMANCE BENCHMARKING
+// ─────────────────────────────────────────────
+
+export async function createPerformanceBenchmark(data: InsertPerformanceBenchmark): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(performanceBenchmarks).values(data);
+}
+
+export async function getPerformanceBenchmarks(sector = "all"): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(performanceBenchmarks)
+    .where(eq(performanceBenchmarks.sector, sector))
+    .orderBy(desc(performanceBenchmarks.createdAt));
+}
+
+export async function getBenchmarkById(id: number): Promise<any> {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db
+    .select()
+    .from(performanceBenchmarks)
+    .where(eq(performanceBenchmarks.id, id))
+    .limit(1);
+  return result[0] || null;
+}
+
+export async function createBenchmarkComparison(data: InsertBenchmarkComparison): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(benchmarkComparisons).values(data);
+}
+
+export async function getBenchmarkComparison(investorId: number, benchmarkId: number): Promise<any> {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db
+    .select()
+    .from(benchmarkComparisons)
+    .where(and(eq(benchmarkComparisons.investorId, investorId), eq(benchmarkComparisons.benchmarkId, benchmarkId)))
+    .limit(1);
+  return result[0] || null;
+}
+
+export async function getInvestorBenchmarkComparisons(investorId: number): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(benchmarkComparisons)
+    .where(eq(benchmarkComparisons.investorId, investorId))
+    .orderBy(desc(benchmarkComparisons.createdAt));
 }
