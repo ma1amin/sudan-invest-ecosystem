@@ -428,11 +428,18 @@ export default function Home() {
               </div>
               <span className="font-bold text-foreground text-sm">Sudan Invest Ecosystem</span>
             </div>
-            <p className="text-muted-foreground text-sm text-center">
-              {language === "en"
-                ? "Building Sudan's most trusted investment and innovation platform."
-                : "بناء منصة الاستثمار والابتكار الأكثر موثوقية في السودان."}
-            </p>
+            <div className="text-muted-foreground text-sm text-center">
+              <p>
+                {language === "en"
+                  ? "Made with ❤️ By InfoLgix"
+                  : "صُنع بـ ❤️ بواسطة InfoLgix"}
+              </p>
+              <p className="mt-2">
+                {language === "en"
+                  ? "SudVenture 2026 © All Right Reserved"
+                  : "SudVenture 2026 © جميع الحقوق محفوظة"}
+              </p>
+            </div>
             <button onClick={toggleLanguage} className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors">
               <Languages className="w-4 h-4" />
               {language === "en" ? "العربية" : "English"}
